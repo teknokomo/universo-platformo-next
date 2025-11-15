@@ -3,7 +3,12 @@
 **Feature Branch**: `001-nextjs-foundation-setup`  
 **Created**: 2025-11-15  
 **Status**: Draft  
-**Input**: User description: "Initial repository setup and Next.js foundation for Universo Platformo - Create a new Next.js-based implementation with PNPM monorepo structure, TypeScript, Supabase integration, and bilingual documentation"
+**Input**: User description: "Initial repository setup and Next.js foundation for Universo Platformo - Create a new Next.js-based implementation with PNPM monorepo structure, TypeScript, Supabase integration, and bilingual documentation"  
+**Reference Implementation**: [Universo Platformo React](https://github.com/teknokomo/universo-platformo-react) - Provides architectural patterns and concepts (not direct code copying)
+
+## Context
+
+This specification establishes the foundation for Universo Platformo Next, a new implementation built on Next.js and TypeScript. The project adopts architectural patterns from the React version (teknokomo/universo-platformo-react) including monorepo structure, package organization, and bilingual documentation, while implementing Next.js best practices and avoiding legacy code patterns.
 
 ## User Scenarios & Testing *(mandatory)*
 

@@ -27,6 +27,16 @@ Follow-up TODOs: None
 
 ## Core Principles
 
+### Context and Reference Implementation
+
+**Reference Project**: This implementation is based on the architectural concepts established in [Universo Platformo React](https://github.com/teknokomo/universo-platformo-react). The React version serves as the conceptual reference but is still partially implemented with legacy code from Flowise that has not yet been fully removed. This Next.js implementation adopts the validated patterns and architecture from the React version while following Next.js best practices and avoiding legacy implementation issues.
+
+**Key Guidance**:
+- Learn from the general architecture and package structure of the React implementation
+- Do NOT copy specific code implementations or legacy patterns
+- Focus on the proven concepts: monorepo structure, package organization, database abstraction, and bilingual documentation
+- Monitor the React repository for new features and architectural improvements to implement in this Next.js version
+
 ### I. Monorepo Architecture (NON-NEGOTIABLE)
 
 The project MUST be structured as a monorepo managed with PNPM. All packages reside in the `packages/` directory. This ensures:
@@ -108,7 +118,7 @@ Complex features MUST be designed before implementation:
 - **Language**: TypeScript (strict mode)
 - **Package Manager**: PNPM (workspaces)
 - **Database**: Supabase (with abstraction for future alternatives)
-- **Authentication**: Passport.js with Supabase connector
+- **Authentication**: Passport.js with Supabase connector (or compatible Supabase authentication strategy)
 - **UI Framework**: Material UI (MUI)
 - **State Management**: Next.js native patterns (Server/Client Components)
 
@@ -124,6 +134,7 @@ Complex features MUST be designed before implementation:
 ### Prohibited Patterns
 
 - Do NOT create separate `docs/` directory (documentation lives in external repository)
+- Do NOT create AI agent configuration files or directories (`.github/agents/`, `.github/prompts/`, etc.) - users will create these themselves as needed
 - Do NOT copy legacy patterns from Universo Platformo React without evaluation
 - Do NOT bypass the database abstraction layer for quick fixes
 - Do NOT mix JavaScript and TypeScript in the same package
@@ -197,5 +208,50 @@ When constitutional principles must be violated for technical necessity:
 ### Continuous Improvement
 
 Review this constitution quarterly to ensure it remains relevant and effective. Update based on lessons learned and evolving project needs.
+
+## Feature Development Roadmap
+
+The platform follows a phased implementation approach, building complexity incrementally:
+
+### Phase 1: Foundation (Current)
+- Repository setup and configuration
+- Basic monorepo structure with PNPM
+- Development tooling (TypeScript, ESLint, Prettier)
+- Bilingual documentation framework
+- GitHub workflow templates
+
+### Phase 2: Core Infrastructure
+- Base authentication system (Passport.js + Supabase)
+- Database abstraction layer
+- Material UI theming and component library setup
+- Basic routing and layout structure in Next.js
+
+### Phase 3: First Domain - Clusters
+Implement the first complete functional domain as a template for others:
+- **Clusters**: Top-level organizational units
+- **Domains**: Sub-units within Clusters  
+- **Resources**: Items within Domains
+
+This three-tier entity structure serves as the architectural pattern for other features.
+
+### Phase 4: Additional Domains
+Replicate the Clusters pattern for related domains:
+- **Metaverses**: Metaverses / Sections / Entities
+- **Uniks** (Uniques): Multi-tier entity management with potentially more complex hierarchies
+
+Each domain follows the established frontend (-frt) and backend (-srv) package pattern with base/ directories.
+
+### Phase 5: Advanced Features
+Build sophisticated functionality on top of the foundation:
+- **Spaces** and **Canvases**: Visual editing environments
+- **LangChain Graph System**: Node-based workflow editor for AI chains
+- **UPDL Nodes** (Universo Platformo Definition Language): Custom node types for platform-specific operations
+- Advanced integrations and plugins
+
+### Implementation Principles
+- Each phase builds on previous phases without breaking existing functionality
+- New domains should reuse patterns from Clusters wherever possible
+- Advanced features integrate with but don't replace core domain functionality
+- Maintain consistency in package structure, naming, and architecture across all phases
 
 **Version**: 1.0.0 | **Ratified**: 2025-11-15 | **Last Amended**: 2025-11-15

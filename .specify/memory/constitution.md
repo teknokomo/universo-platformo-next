@@ -1,15 +1,21 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version Change: UNVERSIONED → 1.0.0
-Reason: Initial constitution ratification for Universo Platformo Next project
+Version Change: 1.0.0 → 1.1.0
+Reason: Enhanced requirements based on comprehensive checklist review
 
-Modified Principles: N/A (initial creation)
+Modified Principles:
+  - Enhanced Technology Stack Requirements with specific versions
+  - Added Version Management section
+  - Expanded Prohibited Patterns with legacy pattern examples
+  - Enhanced Code Review Requirements section
+  - Expanded Feature Development Roadmap with dependencies and success criteria
+
 Added Sections:
-  - Core Principles (7 principles)
-  - Technology Stack Requirements
-  - Development Workflow
-  - Governance
+  - Version Management (dependency versioning, security updates)
+  - Code Review Requirements (qualifications, checklist, process, conflict resolution)
+  - Phase Dependencies Summary
+  - Domain-Specific Characteristics for each phase
 
 Templates Status:
   ✅ plan-template.md - Reviewed, aligned with constitution principles
@@ -20,7 +26,9 @@ Templates Status:
   ✅ .github/instructions/github-pr.md - Reviewed, aligned
   ✅ .github/instructions/i18n-docs.md - Reviewed, aligned
 
-Follow-up TODOs: None
+Follow-up TODOs:
+  - Validate specification aligns with enhanced constitution
+  - Update checklists to reflect addressed gaps
 -->
 
 # Universo Platformo Next Constitution
@@ -114,30 +122,51 @@ Complex features MUST be designed before implementation:
 
 ### Mandatory Technologies
 
-- **Framework**: Next.js (latest stable) with App Router
-- **Language**: TypeScript (strict mode)
-- **Package Manager**: PNPM (workspaces)
-- **Database**: Supabase (with abstraction for future alternatives)
+- **Framework**: Next.js 14.x or latest stable with App Router
+- **Language**: TypeScript (strict mode enabled)
+- **Package Manager**: PNPM 8.x or higher (workspaces)
+- **Runtime**: Node.js 18.x or higher
+- **Database**: Supabase (with abstraction for future alternatives including PostgreSQL, MySQL, MongoDB)
 - **Authentication**: Passport.js with Supabase connector (or compatible Supabase authentication strategy)
-- **UI Framework**: Material UI (MUI)
-- **State Management**: Next.js native patterns (Server/Client Components)
+- **UI Framework**: Material UI (MUI) 5.x or latest stable
+- **State Management**: Next.js native patterns (Server/Client Components, Server Actions)
+- **Testing**: Jest, Vitest, or compatible testing framework with React Testing Library
 
 ### Technology Guidelines
 
 - Leverage Next.js Server Components for data fetching where possible
-- Use Client Components only when interactive state is required
-- Implement API routes in Next.js App Router structure
+- Use Client Components only when interactive state or browser APIs are required
+- Implement API routes in Next.js App Router structure (`app/api/`)
 - Follow Next.js best practices for routing, layouts, and middleware
 - Use MUI theming and component system consistently across the application
 - Implement authentication middleware using Passport.js patterns
+- All database access must go through the abstraction layer in `base/` directories
+- Environment variables must be typed and validated in TypeScript
+- Security vulnerabilities must be addressed before merging to main branch
+
+### Version Management
+
+- **Dependency Versioning**: Use exact versions for critical dependencies, ranges (^) for minor updates
+- **Security Updates**: Critical security patches must be applied within 48 hours of disclosure
+- **Major Upgrades**: Major version upgrades require specification, testing, and team review
+- **Dependency Audits**: Run `pnpm audit` before every release and address high/critical issues
 
 ### Prohibited Patterns
 
 - Do NOT create separate `docs/` directory (documentation lives in external repository)
 - Do NOT create AI agent configuration files or directories (`.github/agents/`, `.github/prompts/`, etc.) - users will create these themselves as needed
+  - **Note**: Existing AI agent files in `.github/agents/` and `.github/prompts/` are grandfathered and maintained by project administrators
+  - This prohibition applies only to new AI-generated agent configuration files created by automated processes
 - Do NOT copy legacy patterns from Universo Platformo React without evaluation
+  - **Legacy Patterns to Avoid**: 
+    - Mixing Flowise legacy code with new implementations
+    - React-specific state management patterns that don't translate to Next.js
+    - Client-side data fetching where Server Components would be more appropriate
+    - Monolithic package structures that should be split into -frt/-srv
 - Do NOT bypass the database abstraction layer for quick fixes
 - Do NOT mix JavaScript and TypeScript in the same package
+- Do NOT use Pages Router patterns in an App Router project
+- Do NOT commit environment files with secrets (`.env.local`, `.env.production`)
 
 ## Development Workflow
 
@@ -167,12 +196,51 @@ Complex features MUST be designed before implementation:
 ### Quality Gates
 
 Before merging, verify:
-- All tests pass
+- All tests pass (unit, integration, e2e where applicable)
 - TypeScript compilation succeeds with no errors
 - ESLint and Prettier checks pass
-- Both English and Russian documentation updated
-- No new dependencies added without security review
+- Both English and Russian documentation updated with identical structure
+- No new dependencies added without security review (pnpm audit passes)
+- Test coverage maintains or improves current levels
 - Constitution principles not violated
+- Code review approved by at least one qualified reviewer
+- All CI/CD checks pass successfully
+
+### Code Review Requirements
+
+#### Reviewer Qualifications
+- Reviewers must understand Next.js App Router architecture
+- Reviewers must be familiar with TypeScript strict mode
+- Reviewers must know the project's constitution and architectural principles
+- At least one reviewer must approve before merging
+
+#### Review Checklist
+- [ ] Code follows TypeScript strict mode (no `any` types)
+- [ ] Next.js patterns used correctly (Server vs Client Components)
+- [ ] Database access uses abstraction layer (in `base/` directory)
+- [ ] Tests are included and pass
+- [ ] Documentation updated in both English and Russian
+- [ ] No security vulnerabilities introduced
+- [ ] No prohibited patterns used
+- [ ] Code is maintainable and follows project conventions
+- [ ] Changes align with specification and Issue requirements
+- [ ] Environment variables properly typed and validated
+
+#### Review Process
+1. Reviewer examines code changes against checklist
+2. Reviewer tests functionality locally if needed
+3. Reviewer provides constructive feedback inline
+4. Author addresses feedback with additional commits
+5. Reviewer approves when all concerns resolved
+6. Automated CI checks must pass before merge
+
+#### Conflict Resolution
+When reviewers disagree or requirements conflict:
+1. Document the specific conflict and competing concerns
+2. Refer to constitution principles for guidance
+3. Escalate to project lead if constitution doesn't provide clarity
+4. Project lead makes final decision with documented rationale
+5. Update constitution if pattern should be codified
 
 ## Governance
 
@@ -214,19 +282,50 @@ Review this constitution quarterly to ensure it remains relevant and effective. 
 The platform follows a phased implementation approach, building complexity incrementally:
 
 ### Phase 1: Foundation (Current)
+
+**Scope:**
 - Repository setup and configuration
 - Basic monorepo structure with PNPM
-- Development tooling (TypeScript, ESLint, Prettier)
+- Development tooling (TypeScript, ESLint, Prettier, Testing)
+- Next.js 14 App Router configuration
 - Bilingual documentation framework
-- GitHub workflow templates
+- GitHub workflow templates (Issues, PRs, Labels)
+- Environment configuration setup
+- MUI and authentication configuration (not full implementation)
+- Database abstraction layer design
+
+**Dependencies:** None (foundational phase)
+
+**Success Criteria:**
+- Developer can clone, install, and run project in under 10 minutes
+- All configuration files present and validated
+- Documentation complete in both languages
+- Tests pass, linting passes, TypeScript compiles without errors
+- Can create new packages following established patterns
 
 ### Phase 2: Core Infrastructure
-- Base authentication system (Passport.js + Supabase)
-- Database abstraction layer
-- Material UI theming and component library setup
+
+**Scope:**
+- Full authentication system implementation (Passport.js + Supabase)
+- Database abstraction layer implementation with Supabase
+- Material UI theming and component library full setup
 - Basic routing and layout structure in Next.js
+- User management and session handling
+- Authorization middleware
+- Comprehensive test coverage for core functionality
+
+**Dependencies:** Phase 1 complete
+
+**Success Criteria:**
+- Users can authenticate with Supabase credentials
+- Database operations work through abstraction layer
+- MUI components render correctly in Server and Client Components
+- Protected routes enforce authentication
+- All core infrastructure has >80% test coverage
 
 ### Phase 3: First Domain - Clusters
+
+**Scope:**
 Implement the first complete functional domain as a template for others:
 - **Clusters**: Top-level organizational units
 - **Domains**: Sub-units within Clusters  
@@ -234,24 +333,95 @@ Implement the first complete functional domain as a template for others:
 
 This three-tier entity structure serves as the architectural pattern for other features.
 
+**Dependencies:** Phase 2 complete (requires auth, database, UI framework)
+
+**Success Criteria:**
+- Users can create, read, update, delete Clusters
+- Three-tier hierarchy (Clusters → Domains → Resources) fully functional
+- CRUD operations work with proper authorization
+- UI implements consistent patterns reusable for other domains
+- API follows RESTful conventions
+- Package structure (-frt/-srv with base/) demonstrated
+
+**Domain-Specific Characteristics:**
+- Clusters are the top-level organizational primitive
+- Each Cluster can contain multiple Domains
+- Each Domain can contain multiple Resources
+- Authorization: Users can be members of Clusters with different roles
+
 ### Phase 4: Additional Domains
+
+**Scope:**
 Replicate the Clusters pattern for related domains:
-- **Metaverses**: Metaverses / Sections / Entities
-- **Uniks** (Uniques): Multi-tier entity management with potentially more complex hierarchies
+
+**Metaverses Domain:**
+- **Metaverses**: Virtual world containers (similar to Clusters)
+- **Sections**: Areas within Metaverses (similar to Domains)
+- **Entities**: Objects within Sections (similar to Resources)
+- Domain-specific features: 3D positioning, spatial relationships
+
+**Uniks (Uniques) Domain:**
+- Multi-tier entity management with potentially more complex hierarchies
+- May have more than three tiers depending on requirements
+- Domain-specific features: Uniqueness constraints, versioning
 
 Each domain follows the established frontend (-frt) and backend (-srv) package pattern with base/ directories.
 
+**Dependencies:** Phase 3 complete (Clusters provides the template)
+
+**Success Criteria:**
+- Metaverses and Uniks domains fully functional
+- Patterns from Clusters successfully reused (>70% code pattern reuse)
+- New domains integrate seamlessly with authentication and authorization
+- Performance acceptable (response times < 500ms for standard operations)
+- Documentation updated for each new domain
+
+**Domain-Specific Differences:**
+- Metaverses include spatial/3D concepts not present in Clusters
+- Uniks may have validation rules around uniqueness
+- Some domains may share relationships (e.g., Clusters can contain Metaverses)
+
 ### Phase 5: Advanced Features
+
+**Scope:**
 Build sophisticated functionality on top of the foundation:
-- **Spaces** and **Canvases**: Visual editing environments
+- **Spaces** and **Canvases**: Visual editing environments for creating workflows
 - **LangChain Graph System**: Node-based workflow editor for AI chains
 - **UPDL Nodes** (Universo Platformo Definition Language): Custom node types for platform-specific operations
 - Advanced integrations and plugins
+- Real-time collaboration features
+- Advanced analytics and monitoring
+
+**Dependencies:** Phase 4 complete (requires all core domains)
+
+**Success Criteria:**
+- Users can create and edit visual workflows in Canvases
+- LangChain nodes execute correctly with proper error handling
+- UPDL nodes provide platform-specific operations
+- Real-time updates work across multiple users
+- System scales to support expected user load
+- Advanced features integrate without breaking core functionality
+
+### Phase Dependencies Summary
+
+```
+Phase 1 (Foundation)
+    ↓
+Phase 2 (Core Infrastructure)
+    ↓
+Phase 3 (Clusters - First Domain)
+    ↓
+Phase 4 (Additional Domains)
+    ↓
+Phase 5 (Advanced Features)
+```
 
 ### Implementation Principles
 - Each phase builds on previous phases without breaking existing functionality
-- New domains should reuse patterns from Clusters wherever possible
+- New domains should reuse patterns from Clusters wherever possible (minimum 70% pattern reuse)
 - Advanced features integrate with but don't replace core domain functionality
 - Maintain consistency in package structure, naming, and architecture across all phases
+- Each phase requires full testing and documentation before proceeding to next
+- Breaking changes require major version bump and migration guide
 
-**Version**: 1.0.0 | **Ratified**: 2025-11-15 | **Last Amended**: 2025-11-15
+**Version**: 1.1.0 | **Ratified**: 2025-11-15 | **Last Amended**: 2025-11-16

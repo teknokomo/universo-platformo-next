@@ -2,13 +2,37 @@
 
 **Feature Branch**: `001-nextjs-foundation-setup`  
 **Created**: 2025-11-15  
-**Status**: Draft  
+**Updated**: 2025-11-16  
+**Status**: Enhanced  
 **Input**: User description: "Initial repository setup and Next.js foundation for Universo Platformo - Create a new Next.js-based implementation with PNPM monorepo structure, TypeScript, Supabase integration, and bilingual documentation"  
 **Reference Implementation**: [Universo Platformo React](https://github.com/teknokomo/universo-platformo-react) - Provides architectural patterns and concepts (not direct code copying)
+
+### Reference Implementation Monitoring
+
+The React implementation serves as a conceptual reference for architectural patterns. When monitoring the React repository for new features:
+
+**Adoption Criteria:**
+- Feature aligns with Next.js architecture and best practices
+- Feature is fully implemented (not legacy or incomplete)
+- Feature provides clear user value that applies to this implementation
+- Feature can be implemented without copying React-specific code patterns
+
+**Evaluation Process:**
+1. Review new features in React repository monthly
+2. Document features in specs/ with evaluation against adoption criteria
+3. Create Issues for features that meet criteria
+4. Implement using Next.js patterns, not direct code translation
 
 ## Context
 
 This specification establishes the foundation for Universo Platformo Next, a new implementation built on Next.js and TypeScript. The project adopts architectural patterns from the React version (teknokomo/universo-platformo-react) including monorepo structure, package organization, and bilingual documentation, while implementing Next.js best practices and avoiding legacy code patterns.
+
+**Technology Context:**
+- **Next.js**: Version 14.x or latest stable, using App Router architecture
+- **TypeScript**: Strict mode with comprehensive type checking
+- **Node.js**: Version 18.x or higher required
+- **PNPM**: Version 8.x or higher for workspace management
+- **Target Environment**: Development, staging, and production environments with appropriate configurations
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -80,7 +104,24 @@ The GitHub repository has appropriate labels configured for issue tracking, and 
 
 ---
 
-### User Story 5 - Prepare for Database Integration (Priority: P3)
+### User Story 5 - Configure Next.js Development Patterns (Priority: P2)
+
+The project follows Next.js 14.x App Router architecture with clear patterns for Server Components, Client Components, and API routes. The development environment is configured to support Next.js best practices including Server-Side Rendering (SSR), Static Site Generation (SSG), and proper code splitting.
+
+**Why this priority**: Next.js-specific patterns must be established early to guide all future feature development. This ensures consistent architecture and prevents mixing incompatible patterns.
+
+**Independent Test**: Can be tested by examining Next.js configuration files, creating sample Server and Client Components, and verifying the App Router structure works correctly. Success means understanding when to use each pattern.
+
+**Acceptance Scenarios**:
+
+1. **Given** Next.js is configured, **When** a developer reviews project documentation, **Then** they understand when to use Server Components vs Client Components
+2. **Given** the App Router is configured, **When** a developer creates a new route, **Then** they can use the app/ directory structure with layouts and pages
+3. **Given** API routes are needed, **When** a developer creates an API endpoint, **Then** they use the Next.js 14 route handler pattern in app/api/
+4. **Given** the developer needs data fetching, **When** they implement data loading, **Then** they use Server Components with async/await instead of client-side fetching where appropriate
+
+---
+
+### User Story 6 - Prepare for Database Integration (Priority: P3)
 
 The project includes configuration files and environment variable templates for Supabase integration, along with documentation explaining how to set up a Supabase project and configure the connection.
 
@@ -97,6 +138,57 @@ The project includes configuration files and environment variable templates for 
 
 ---
 
+### User Story 7 - Prepare Authentication Infrastructure (Priority: P3)
+
+The project includes configuration and documentation for Passport.js authentication with Supabase connector. The authentication infrastructure is designed with abstraction to support future authentication strategies while initially focusing on Supabase.
+
+**Why this priority**: Authentication setup can be documented and configured in Phase 1 without full implementation. The actual authentication middleware and flows will be implemented in Phase 2 when building core infrastructure.
+
+**Independent Test**: Can be tested by verifying authentication configuration files exist, environment variables for auth are documented, and the abstraction pattern is clearly explained in documentation.
+
+**Acceptance Scenarios**:
+
+1. **Given** authentication is configured, **When** a developer reviews the setup documentation, **Then** they understand how Passport.js integrates with Supabase
+2. **Given** auth configuration exists, **When** a developer examines `.env.example`, **Then** they find all necessary Supabase authentication variables documented
+3. **Given** the abstraction pattern is documented, **When** a developer reads the architecture guide, **Then** they understand how to add future authentication strategies
+4. **Given** auth middleware patterns are documented, **When** a developer needs to protect routes, **Then** they know the planned approach for authentication middleware
+
+---
+
+### User Story 8 - Configure UI Framework Foundation (Priority: P3)
+
+The project includes Material UI (MUI) configured for Next.js App Router with theming support and consistent component usage patterns. Documentation explains MUI integration with Server and Client Components.
+
+**Why this priority**: UI framework setup can be configured in Phase 1 to establish patterns. Actual component development happens in later phases when building features.
+
+**Independent Test**: Can be tested by verifying MUI dependencies are configured, theme configuration exists, and documentation explains usage patterns with Next.js.
+
+**Acceptance Scenarios**:
+
+1. **Given** MUI is configured, **When** a developer reviews dependencies, **Then** they find MUI v5.x or latest stable version
+2. **Given** theming is set up, **When** a developer examines the configuration, **Then** they find theme configuration file with color palette and typography settings
+3. **Given** MUI + Next.js integration is documented, **When** a developer reads the UI guide, **Then** they understand how to use MUI with Server Components vs Client Components
+4. **Given** component patterns are documented, **When** a developer needs to create UI, **Then** they know the conventions for consistent MUI usage
+
+---
+
+### User Story 9 - Establish Testing Infrastructure (Priority: P3)
+
+The project includes testing framework configuration and documentation for unit tests, integration tests, and end-to-end tests. Testing patterns for Next.js App Router are documented with examples.
+
+**Why this priority**: Testing infrastructure should be set up from the beginning to enable test-driven development. Initial setup includes configuration and examples, with actual test coverage growing as features are implemented.
+
+**Independent Test**: Can be tested by running test commands, verifying test configuration files exist, and confirming sample tests pass successfully.
+
+**Acceptance Scenarios**:
+
+1. **Given** testing is configured, **When** a developer runs `pnpm test`, **Then** the test runner executes successfully with configured framework
+2. **Given** test examples exist, **When** a developer examines the test files, **Then** they find examples for testing Server Components, Client Components, and API routes
+3. **Given** test coverage is configured, **When** a developer runs tests with coverage, **Then** they see coverage reports indicating tested vs untested code
+4. **Given** testing guidelines are documented, **When** a developer reads the testing guide, **Then** they understand testing patterns for Next.js App Router architecture
+
+---
+
 ### Edge Cases
 
 - What happens when a developer tries to install dependencies without having pnpm installed? (Should provide clear error message and installation instructions)
@@ -104,6 +196,15 @@ The project includes configuration files and environment variable templates for 
 - How does the system handle missing environment variables? (Should fail gracefully with clear error messages indicating which variables are required)
 - What happens when bilingual documentation files get out of sync? (Documentation guidelines should emphasize keeping both versions identical in structure)
 - How does the workspace handle package version conflicts? (Should use pnpm workspace protocols and document resolution strategy)
+- What happens when a package needs both frontend and backend but doesn't follow -frt/-srv naming? (Should be documented as exception or prevented)
+- How does the system handle a package that needs only frontend OR only backend? (Single-sided packages are allowed without suffix)
+- What happens when someone tries to create a docs/ directory? (Should be prevented or warned, as docs go in separate repository)
+- How are development vs staging vs production environment configurations managed? (Should have clear separation with .env files for each)
+- What happens when adding a new dependency with security vulnerabilities? (Should have security scanning in place)
+- How does the system handle authentication failures during development without Supabase configured? (Should gracefully degrade or provide mock auth for local development)
+- What happens when MUI components are used in Server Components incorrectly? (Documentation and examples should prevent this)
+- How are test failures in CI/CD handled? (Should block merging until resolved)
+- What happens when Russian translation is missing or incomplete? (Should be caught in review process, guidelines emphasize synchronization)
 
 ## Requirements *(mandatory)*
 
@@ -130,17 +231,106 @@ The project includes configuration files and environment variable templates for 
 - **FR-019**: README files MUST include getting started instructions for developers
 - **FR-020**: README files MUST document required Node.js and pnpm versions
 
+#### Next.js Configuration Requirements
+
+- **FR-021**: System MUST use Next.js version 14.x or latest stable version
+- **FR-022**: System MUST be configured to use Next.js App Router architecture (not Pages Router)
+- **FR-023**: System MUST include TypeScript configuration with strict mode enabled
+- **FR-024**: Documentation MUST explain when to use Server Components vs Client Components
+- **FR-025**: Documentation MUST provide examples of Server Component data fetching patterns
+- **FR-026**: API routes MUST follow Next.js 14 App Router structure in `app/api/` directory
+- **FR-027**: System MUST include Next.js configuration for both development and production builds
+
+#### Monorepo & Workspace Requirements
+
+- **FR-028**: System MUST support PNPM workspace commands including `pnpm -r` (recursive) and `pnpm --filter`
+- **FR-029**: Workspace configuration MUST define dependency management rules to prevent version conflicts
+- **FR-030**: System MUST allow packages that need only frontend OR only backend without requiring the -frt/-srv suffix
+- **FR-031**: Documentation MUST explain how to create new packages in the workspace
+- **FR-032**: Root package.json MUST include scripts for building, testing, and linting all workspace packages
+
+#### Version Requirements
+
+- **FR-033**: System MUST require Node.js version 18.x or higher
+- **FR-034**: System MUST require PNPM version 8.x or higher
+- **FR-035**: System MUST document a dependency versioning strategy (pinning vs ranges)
+- **FR-036**: Package dependencies MUST be regularly audited for security vulnerabilities
+
+#### Database Abstraction Requirements
+
+- **FR-037**: System MUST include a database abstraction layer design documented in architecture guide
+- **FR-038**: Database-specific implementation code MUST reside in the `base/` directory of packages
+- **FR-039**: Database abstraction MUST support future addition of PostgreSQL, MySQL, and MongoDB without refactoring business logic
+- **FR-040**: System MUST include interfaces or types defining the database abstraction layer API
+- **FR-041**: Initial implementation MUST use Supabase as the primary database
+- **FR-042**: Environment configuration MUST separate database connection settings from application logic
+
+#### Authentication Requirements
+
+- **FR-043**: System MUST include configuration for Passport.js authentication framework
+- **FR-044**: System MUST include Supabase authentication connector or compatible strategy for Passport.js
+- **FR-045**: Documentation MUST explain authentication middleware patterns for protecting routes
+- **FR-046**: Authentication configuration MUST be designed to support future authentication strategies (OAuth, SAML, etc.)
+- **FR-047**: System MUST include environment variables for authentication configuration in `.env.example`
+
+#### UI Framework Requirements
+
+- **FR-048**: System MUST include Material UI (MUI) version 5.x or latest stable
+- **FR-049**: System MUST include MUI theme configuration with customizable color palette and typography
+- **FR-050**: Documentation MUST explain how to use MUI components with Next.js App Router
+- **FR-051**: Documentation MUST clarify which MUI components work in Server Components vs Client Components
+- **FR-052**: System MUST include MUI integration configured for Next.js App Router (handling SSR, CSS-in-JS)
+
+#### Testing Requirements
+
+- **FR-053**: System MUST include a testing framework configured (Jest, Vitest, or similar)
+- **FR-054**: System MUST include example tests for Server Components, Client Components, and API routes
+- **FR-055**: System MUST support running tests with `pnpm test` command
+- **FR-056**: System MUST include test coverage reporting configuration
+- **FR-057**: Documentation MUST explain testing patterns for Next.js App Router architecture
+- **FR-058**: Tests MUST be required to pass before merging pull requests
+
+#### Environment Configuration Requirements
+
+- **FR-059**: System MUST support separate configurations for development, staging, and production environments
+- **FR-060**: Environment variables MUST be typed and validated in TypeScript
+- **FR-061**: System MUST gracefully handle missing required environment variables with clear error messages
+- **FR-062**: Documentation MUST explain which environment variables are required vs optional
+- **FR-063**: Sensitive environment variables MUST NOT be committed to the repository
+
+#### Security Requirements
+
+- **FR-064**: System MUST include security scanning for dependencies
+- **FR-065**: System MUST NOT allow merging code with known security vulnerabilities without explicit justification
+- **FR-066**: Environment files with secrets (`.env.local`) MUST be in `.gitignore`
+- **FR-067**: Documentation MUST include security best practices for the project
+
+#### Code Quality Requirements
+
+- **FR-068**: System MUST include code review requirements before merging
+- **FR-069**: System MUST enforce TypeScript strict mode with no implicit `any` types
+- **FR-070**: ESLint MUST be configured to catch common Next.js and React mistakes
+- **FR-071**: Prettier MUST be configured to auto-format code consistently
+- **FR-072**: Pre-commit hooks MAY be configured to run linting and formatting
+
 ### Key Entities
 
 - **Workspace**: The root-level PNPM workspace configuration that manages multiple packages as a cohesive project
-- **Package**: A self-contained module within the `packages/` directory, following naming conventions for frontend (-frt) or server (-srv) functionality
-- **Configuration Files**: TypeScript, ESLint, Prettier, and environment configurations that establish development standards
+- **Package**: A self-contained module within the `packages/` directory, following naming conventions for frontend (-frt) or server (-srv) functionality, with a `base/` directory for implementation
+- **Configuration Files**: TypeScript, ESLint, Prettier, Next.js, and environment configurations that establish development standards
 - **Documentation Files**: Bilingual README files providing project information, setup instructions, and architectural guidance
 - **GitHub Instructions**: Guidelines for creating issues, pull requests, managing labels, and handling internationalization
+- **Database Abstraction Layer**: Interface-based abstraction allowing multiple database implementations without changing business logic
+- **Authentication Strategy**: Passport.js-based authentication system with pluggable strategies for different auth providers
+- **UI Theme**: MUI theme configuration defining consistent visual styling across the application
+- **Test Suite**: Collection of unit, integration, and end-to-end tests validating application functionality
+- **Environment Configuration**: Typed environment variables managing different deployment contexts (dev/staging/prod)
 
 ## Success Criteria *(mandatory)*
 
 ### Measurable Outcomes
+
+#### Foundation Setup Criteria
 
 - **SC-001**: A developer can clone the repository, run `pnpm install`, and have all dependencies installed successfully in under 5 minutes on a standard internet connection
 - **SC-002**: A developer can run `pnpm dev` and have the Next.js development server start successfully in under 30 seconds
@@ -153,14 +343,90 @@ The project includes configuration files and environment variable templates for 
 - **SC-009**: Documentation clearly explains the project architecture and enables a new developer to understand the system in under 15 minutes of reading
 - **SC-010**: Environment variables are documented in `.env.example` with clear descriptions of their purpose and format
 
+#### Next.js Configuration Criteria
+
+- **SC-011**: Next.js App Router is properly configured and routing works without errors
+- **SC-012**: Documentation includes working examples of both Server Components and Client Components
+- **SC-013**: API routes can be created in `app/api/` directory and respond successfully
+- **SC-014**: Next.js production build (`pnpm build`) completes successfully without errors
+
+#### Monorepo & Workspace Criteria
+
+- **SC-015**: PNPM workspace commands (`pnpm -r`, `pnpm --filter`) work correctly across packages
+- **SC-016**: A new package can be created and integrated into the workspace in under 10 minutes following documentation
+- **SC-017**: Shared dependencies are managed consistently across all workspace packages
+
+#### Testing Infrastructure Criteria
+
+- **SC-018**: Running `pnpm test` executes all configured tests successfully
+- **SC-019**: Test coverage reports are generated and show coverage percentages
+- **SC-020**: Example tests exist for Server Components, Client Components, and API routes
+
+#### Database & Authentication Preparation Criteria
+
+- **SC-021**: Database abstraction layer design is documented with clear interfaces
+- **SC-022**: Supabase configuration variables are documented in `.env.example`
+- **SC-023**: Authentication configuration is documented with Passport.js setup instructions
+- **SC-024**: Environment configuration is typed in TypeScript with validation
+
+#### UI Framework Criteria
+
+- **SC-025**: MUI is configured and a sample component can render successfully
+- **SC-026**: MUI theme configuration is in place with documented customization options
+- **SC-027**: Documentation explains MUI usage patterns with Next.js App Router
+
+#### Quality & Security Criteria
+
+- **SC-028**: No security vulnerabilities exist in configured dependencies (npm audit passes)
+- **SC-029**: Code review guidelines are documented and accessible
+- **SC-030**: All configuration files follow documented standards and best practices
+
 ### Assumptions
+
+#### Development Environment
 
 - Node.js version 18.x or higher is available in the development environment
 - pnpm package manager version 8.x or higher is installed
-- Developers have basic familiarity with Next.js, TypeScript, and monorepo concepts
+- Developers have basic familiarity with Next.js 14, TypeScript, and monorepo concepts
+- Git is installed and configured for version control
+- Developers have access to GitHub repository with appropriate permissions
+
+#### External Services
+
 - GitHub repository has appropriate permissions configured for team collaboration
-- Supabase setup will be performed separately by developers following documentation (active Supabase project not required for initial setup)
-- Material UI (MUI) library will be added in future phases when UI components are needed
-- Passport.js authentication will be configured in future phases when implementing authentication features
+- Supabase setup will be performed separately by developers following documentation (active Supabase project not required for Phase 1)
+- Internet connection is available for installing dependencies and accessing documentation
+
+#### Implementation Phases
+
+- Material UI (MUI) library configuration will be completed in Phase 1, but extensive component usage occurs in later phases
+- Passport.js authentication will be fully implemented in Phase 2 (Core Infrastructure), with Phase 1 focusing on configuration and documentation
+- Database abstraction layer will be designed in Phase 1, with full implementation in Phase 2
+- Testing infrastructure will be set up in Phase 1, with comprehensive test coverage growing as features are implemented in later phases
+
+#### Knowledge & Skills
+
+- Developers understand TypeScript strict mode and type-safe development practices
+- Team members are familiar with Git workflows, pull requests, and code review processes
+- Developers can read and write technical documentation in both English and Russian, or have access to translation tools
+- Team understands monorepo concepts including workspace management and package dependencies
+
+#### Reference Implementation
+
 - The reference implementation at teknokomo/universo-platformo-react is accessible for architectural guidance
+- React version serves as conceptual reference only, not for direct code copying
+- Legacy patterns and incomplete implementations in React version will be identified and avoided
+- React version will be monitored monthly for new features worth adopting
+
+#### Localization
+
 - Russian translation maintains technical accuracy while adapting to Russian technical terminology conventions
+- Both English and Russian documentation will be kept synchronized through review process
+- Technical terms may be transliterated in Russian when standard Russian terminology doesn't exist
+
+#### Quality & Security
+
+- Security scanning tools are available and will be integrated into the development workflow
+- Code review will be performed by qualified team members before merging
+- Performance benchmarks will be established in future phases as features are implemented
+- Accessibility requirements will be addressed when implementing UI components in later phases

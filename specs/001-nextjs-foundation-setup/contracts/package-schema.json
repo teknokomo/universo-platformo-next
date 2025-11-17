@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Universo Platformo Package Schema",
+  "description": "Schema for package.json files in the Universo Platformo monorepo",
+  "type": "object",
+  "required": ["name", "version", "main", "types"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^@universo\\/[a-z0-9-]+(-frt|-srv)?$|^[a-z0-9-]+$",
+      "description": "Package name following @universo/[name] convention"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.]+)?$",
+      "description": "Semantic version"
+    },
+    "description": {
+      "type": "string",
+      "description": "Package description"
+    },
+    "main": {
+      "type": "string",
+      "description": "Entry point for CommonJS (e.g., dist/index.js)"
+    },
+    "module": {
+      "type": "string",
+      "description": "Entry point for ES modules (e.g., dist/index.mjs)"
+    },
+    "types": {
+      "type": "string",
+      "description": "TypeScript type definitions (e.g., dist/index.d.ts)"
+    },
+    "scripts": {
+      "type": "object",
+      "properties": {
+        "build": {
+          "type": "string",
+          "description": "Build command"
+        },
+        "dev": {
+          "type": "string",
+          "description": "Development mode command"
+        },
+        "test": {
+          "type": "string",
+          "description": "Test command"
+        },
+        "lint": {
+          "type": "string",
+          "description": "Lint command"
+        },
+        "type-check": {
+          "type": "string",
+          "description": "TypeScript type checking command"
+        }
+      }
+    },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "devDependencies": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "peerDependencies": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Files to include in package distribution"
+    },
+    "exports": {
+      "type": "object",
+      "description": "Package exports for dual module format"
+    }
+  }
+}

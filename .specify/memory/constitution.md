@@ -1,21 +1,32 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version Change: 1.0.0 → 1.1.0
-Reason: Enhanced requirements based on comprehensive checklist review
+Version Change: 1.1.0 → 1.2.0
+Reason: Major architectural analysis incorporating patterns from universo-platformo-react
 
 Modified Principles:
-  - Enhanced Technology Stack Requirements with specific versions
-  - Added Version Management section
-  - Expanded Prohibited Patterns with legacy pattern examples
-  - Enhanced Code Review Requirements section
-  - Expanded Feature Development Roadmap with dependencies and success criteria
+  - **Technology Stack Requirements**: Added Turborepo, tsdown, Husky, i18next, specific ORM options, updated auth to Supabase Auth Helpers, MUI v6, client state management options, API documentation tools, Docker
+  - **Technology Guidelines**: Expanded with Next.js-specific patterns, MUI v6 setup, dual build requirements, package documentation requirements
+  - **Version Management**: Enhanced with package standards
+  - **Feature Development Roadmap**: Completely restructured from 5 to 7 phases with detailed scope changes
 
 Added Sections:
-  - Version Management (dependency versioning, security updates)
-  - Code Review Requirements (qualifications, checklist, process, conflict resolution)
-  - Phase Dependencies Summary
-  - Domain-Specific Characteristics for each phase
+  - **Package Standards**: Directory structure, build requirements, documentation requirements, testing requirements, naming conventions
+  - Phase 1 additions: Turborepo, Husky, Docker, SECURITY.md, package templates, @universo/types
+  - Phase 2 additions: Profile management, shared infrastructure packages (@universo/utils, @universo/i18n, @universo/api-client), ORM selection, API docs
+  - Phase 3 restructure: Uniks (workspace) added before Clusters
+  - Phase 4 restructure: Added Spaces and Analytics domains
+  - Phase 5 focus: UPDL and Space Builder (AI-assisted development)
+  - **NEW Phase 6**: Templates and Publication system
+  - **NEW Phase 7**: Advanced features and scaling (optional)
+
+Key Architectural Changes:
+  - Authentication: Passport.js → Supabase Auth Helpers for Next.js
+  - Build system: Added Turborepo + tsdown for package builds
+  - Infrastructure packages: Defined @universo/types, @universo/utils, @universo/i18n, @universo/api-client
+  - Domain order: Uniks (workspace) must come before Clusters
+  - Added missing domains: Profile, Analytics, Space Builder
+  - Added template and publication phases
 
 Templates Status:
   ✅ plan-template.md - Reviewed, aligned with constitution principles
@@ -27,8 +38,12 @@ Templates Status:
   ✅ .github/instructions/i18n-docs.md - Reviewed, aligned
 
 Follow-up TODOs:
-  - Validate specification aligns with enhanced constitution
-  - Update checklists to reflect addressed gaps
+  - Update Phase 1 specification with new requirements
+  - Create package README templates
+  - Create SECURITY.md
+  - Document Next.js-specific authentication patterns
+  - Document MUI v6 + Next.js App Router integration
+  - Create architectural decision records for ORM choice
 -->
 
 # Universo Platformo Next Constitution
@@ -125,12 +140,19 @@ Complex features MUST be designed before implementation:
 - **Framework**: Next.js 14.x or latest stable with App Router
 - **Language**: TypeScript (strict mode enabled)
 - **Package Manager**: PNPM 8.x or higher (workspaces)
+- **Build Orchestration**: Turborepo for monorepo build coordination
+- **Package Build Tool**: tsdown for dual CJS+ESM output in shared packages
 - **Runtime**: Node.js 18.x or higher
 - **Database**: Supabase (with abstraction for future alternatives including PostgreSQL, MySQL, MongoDB)
-- **Authentication**: Passport.js with Supabase connector (or compatible Supabase authentication strategy)
-- **UI Framework**: Material UI (MUI) 5.x or latest stable
-- **State Management**: Next.js native patterns (Server/Client Components, Server Actions)
-- **Testing**: Jest, Vitest, or compatible testing framework with React Testing Library
+- **ORM**: Prisma, Drizzle ORM, or TypeORM (to be determined in Phase 2 based on Next.js compatibility)
+- **Authentication**: Supabase Auth Helpers for Next.js (replacing Passport.js which is Express-centric)
+- **UI Framework**: Material UI (MUI) 6.x or latest stable with ColorScheme API
+- **State Management**: Next.js native patterns (Server/Client Components, Server Actions) + Zustand or Jotai for client state
+- **Testing**: Vitest with React Testing Library
+- **Internationalization**: next-intl or i18next with Next.js App Router support
+- **API Documentation**: TypeDoc for TypeScript + OpenAPI for REST endpoints
+- **Git Hooks**: Husky for pre-commit quality checks
+- **Containerization**: Docker for development and deployment
 
 ### Technology Guidelines
 
@@ -138,11 +160,18 @@ Complex features MUST be designed before implementation:
 - Use Client Components only when interactive state or browser APIs are required
 - Implement API routes in Next.js App Router structure (`app/api/`)
 - Follow Next.js best practices for routing, layouts, and middleware
-- Use MUI theming and component system consistently across the application
-- Implement authentication middleware using Passport.js patterns
+- Use MUI v6 with ColorScheme API for consistent theming and dark mode support
+- Configure MUI with Emotion cache for Next.js App Router SSR compatibility
+- Implement authentication using Supabase Auth Helpers (not Passport.js)
+- Use Server Actions for mutations and form submissions
+- Use Zustand or Jotai for client-side state management (lighter than Redux)
 - All database access must go through the abstraction layer in `base/` directories
+- Use Turborepo to orchestrate builds across packages with proper dependency caching
+- Shared packages must provide dual build output (CommonJS + ES Modules + TypeScript declarations)
+- Use Husky git hooks to enforce code quality before commits
 - Environment variables must be typed and validated in TypeScript
 - Security vulnerabilities must be addressed before merging to main branch
+- All packages must include README.md and README-RU.md following standard templates
 
 ### Version Management
 
@@ -150,6 +179,57 @@ Complex features MUST be designed before implementation:
 - **Security Updates**: Critical security patches must be applied within 48 hours of disclosure
 - **Major Upgrades**: Major version upgrades require specification, testing, and team review
 - **Dependency Audits**: Run `pnpm audit` before every release and address high/critical issues
+
+### Package Standards
+
+**Directory Structure:**
+Every package must follow this standard structure (use only directories needed for your package type):
+
+```
+package-name/
+└── base/
+    ├── src/
+    │   ├── api/          # API clients (frontend packages)
+    │   ├── assets/       # Static resources (icons, images)
+    │   ├── components/   # React components (frontend packages)
+    │   ├── routes/       # Express routes (backend packages)
+    │   ├── services/     # Business logic (backend packages)
+    │   ├── database/     # ORM entities and migrations (backend packages)
+    │   ├── i18n/         # Internationalization resources
+    │   ├── types/        # TypeScript type definitions
+    │   ├── utils/        # Utility functions
+    │   └── index.ts      # Entry point
+    ├── dist/             # Compiled output (generated, not committed)
+    ├── package.json
+    ├── tsconfig.json
+    ├── README.md         # English documentation
+    └── README-RU.md      # Russian documentation (exact translation)
+```
+
+**Build Requirements:**
+- Shared packages must use tsdown for dual build output (CJS + ESM + Types)
+- Build output goes to `dist/` directory (add to .gitignore)
+- Package entry points defined in package.json: `main`, `module`, `types`
+- TypeScript must compile with no errors in strict mode
+
+**Documentation Requirements:**
+- Every package must have README.md (English) and README-RU.md (Russian)
+- Russian version must be exact translation with same structure and line count
+- Use provided templates in `.github/templates/package-readme/`
+- Include: Overview, Features, Installation, Usage, API Reference, Architecture
+
+**Testing Requirements:**
+- Tests must be in `src/__tests__/` or `test/` directory
+- Minimum 80% code coverage for shared infrastructure packages
+- Minimum 70% code coverage for domain packages
+- All tests must pass before merging
+
+**Naming Conventions:**
+- Frontend packages: `@universo/[domain]-frt` or scoped name
+- Backend packages: `@universo/[domain]-srv` or scoped name
+- Shared utilities: `@universo/[name]` (e.g., `@universo/types`, `@universo/utils`)
+- Template packages: `@universo/template-[name]` (e.g., `@universo/template-quiz`)
+- Single-sided packages may omit -frt/-srv suffix
 
 ### Prohibited Patterns
 
@@ -285,135 +365,284 @@ The platform follows a phased implementation approach, building complexity incre
 
 **Scope:**
 - Repository setup and configuration
-- Basic monorepo structure with PNPM
-- Development tooling (TypeScript, ESLint, Prettier, Testing)
+- Basic monorepo structure with PNPM and Turborepo
+- Development tooling (TypeScript, ESLint, Prettier, Vitest)
+- Git hooks (Husky) for pre-commit quality checks
 - Next.js 14 App Router configuration
-- Bilingual documentation framework
+- Bilingual documentation framework and package README templates
 - GitHub workflow templates (Issues, PRs, Labels)
 - Environment configuration setup
-- MUI and authentication configuration (not full implementation)
+- MUI v6 configuration for Next.js App Router with Emotion cache
+- Supabase Auth Helpers configuration (not full implementation)
 - Database abstraction layer design
+- Docker configuration for development and deployment
+- SECURITY.md with vulnerability reporting process
+- @universo/types package initialization
 
 **Dependencies:** None (foundational phase)
 
 **Success Criteria:**
 - Developer can clone, install, and run project in under 10 minutes
+- Turborepo builds packages in correct dependency order
 - All configuration files present and validated
 - Documentation complete in both languages
+- Pre-commit hooks run successfully
 - Tests pass, linting passes, TypeScript compiles without errors
 - Can create new packages following established patterns
+- Docker containers build and run successfully
+- @universo/types package provides shared type definitions
 
 ### Phase 2: Core Infrastructure
 
 **Scope:**
-- Full authentication system implementation (Passport.js + Supabase)
+- Full authentication system implementation (Supabase Auth Helpers for Next.js)
+- ORM selection and configuration (Prisma, Drizzle, or TypeORM evaluation)
 - Database abstraction layer implementation with Supabase
-- Material UI theming and component library full setup
+- Material UI theming and component library full setup for App Router
 - Basic routing and layout structure in Next.js
 - User management and session handling
-- Authorization middleware
+- Profile management (profile-frt, profile-srv packages)
+- Authorization middleware for Server Components and API routes
+- Shared infrastructure packages:
+  - @universo/utils (utility functions, UPDLProcessor foundation)
+  - @universo/i18n (internationalization runtime)
+  - @universo/api-client (type-safe API client)
+- API documentation infrastructure (TypeDoc + OpenAPI)
 - Comprehensive test coverage for core functionality
 
 **Dependencies:** Phase 1 complete
 
 **Success Criteria:**
-- Users can authenticate with Supabase credentials
+- Users can authenticate with Supabase credentials using Auth Helpers
 - Database operations work through abstraction layer
+- ORM is selected and configured for Next.js patterns
 - MUI components render correctly in Server and Client Components
-- Protected routes enforce authentication
+- Protected routes enforce authentication in App Router
+- Profile management fully functional
+- Shared infrastructure packages provide dual build output (CJS + ESM)
+- API documentation is generated and accessible
 - All core infrastructure has >80% test coverage
 
-### Phase 3: First Domain - Clusters
+### Phase 3: Workspace and First Domain
 
 **Scope:**
-Implement the first complete functional domain as a template for others:
+Implement workspace management and the first complete functional domain:
+
+**Uniks (Workspace Management)** - Implemented First:
+- uniks-frt, uniks-srv packages
+- Workspace creation and management
+- User-workspace relationships
+- Workspace member management
+- Workspace-level permissions
+- Rationale: Users need workspaces before creating domain entities like clusters
+
+**Clusters Domain** - Implemented Second:
+- clusters-frt, clusters-srv packages
 - **Clusters**: Top-level organizational units
-- **Domains**: Sub-units within Clusters  
+- **Domains**: Sub-units within Clusters
 - **Resources**: Items within Domains
+- Three-tier entity structure as template for other features
+- Proper authorization and access control
 
-This three-tier entity structure serves as the architectural pattern for other features.
-
-**Dependencies:** Phase 2 complete (requires auth, database, UI framework)
+**Dependencies:** Phase 2 complete (requires auth, database, UI framework, profile)
 
 **Success Criteria:**
-- Users can create, read, update, delete Clusters
+- Users can create and manage workspaces (Uniks)
+- Users can create, read, update, delete Clusters within workspaces
 - Three-tier hierarchy (Clusters → Domains → Resources) fully functional
-- CRUD operations work with proper authorization
+- CRUD operations work with proper authorization at workspace level
 - UI implements consistent patterns reusable for other domains
-- API follows RESTful conventions
+- API follows RESTful or Next.js patterns (Server Actions + Route Handlers)
 - Package structure (-frt/-srv with base/) demonstrated
+- At least 70% code coverage for both domains
 
 **Domain-Specific Characteristics:**
-- Clusters are the top-level organizational primitive
+- Uniks (Workspaces): Container for all user's projects and resources
+- Clusters: Top-level organizational primitive within a workspace
 - Each Cluster can contain multiple Domains
 - Each Domain can contain multiple Resources
-- Authorization: Users can be members of Clusters with different roles
+- Authorization: Users can be members of workspaces and clusters with different roles
 
-### Phase 4: Additional Domains
+### Phase 4: Additional Domains and Analytics
 
 **Scope:**
-Replicate the Clusters pattern for related domains:
+Replicate the established patterns for additional domains:
 
 **Metaverses Domain:**
+- metaverses-frt, metaverses-srv packages
 - **Metaverses**: Virtual world containers (similar to Clusters)
 - **Sections**: Areas within Metaverses (similar to Domains)
 - **Entities**: Objects within Sections (similar to Resources)
 - Domain-specific features: 3D positioning, spatial relationships
 
-**Uniks (Uniques) Domain:**
-- Multi-tier entity management with potentially more complex hierarchies
-- May have more than three tiers depending on requirements
-- Domain-specific features: Uniqueness constraints, versioning
+**Spaces (Canvas Management):**
+- spaces-frt, spaces-srv packages
+- Flow/canvas management within workspaces
+- Integration with visual node editor
+- Canvas storage and versioning
+
+**Analytics:**
+- analytics-frt package
+- User engagement tracking
+- Usage analytics dashboard
+- Data visualization components
+- Quiz and interaction analytics
 
 Each domain follows the established frontend (-frt) and backend (-srv) package pattern with base/ directories.
 
-**Dependencies:** Phase 3 complete (Clusters provides the template)
+**Dependencies:** Phase 3 complete (Uniks and Clusters provide the templates)
 
 **Success Criteria:**
-- Metaverses and Uniks domains fully functional
+- Metaverses, Spaces, and Analytics domains fully functional
 - Patterns from Clusters successfully reused (>70% code pattern reuse)
-- New domains integrate seamlessly with authentication and authorization
+- New domains integrate seamlessly with authentication and workspace management
 - Performance acceptable (response times < 500ms for standard operations)
-- Documentation updated for each new domain
+- Documentation updated for each new domain in both languages
+- Analytics provides actionable insights
 
 **Domain-Specific Differences:**
 - Metaverses include spatial/3D concepts not present in Clusters
-- Uniks may have validation rules around uniqueness
-- Some domains may share relationships (e.g., Clusters can contain Metaverses)
+- Spaces integrate with visual flow editor
+- Analytics focuses on read-only data visualization
+- All domains operate within workspace (Unik) context
 
-### Phase 5: Advanced Features
+### Phase 5: UPDL and Visual Programming
 
 **Scope:**
-Build sophisticated functionality on top of the foundation:
-- **Spaces** and **Canvases**: Visual editing environments for creating workflows
-- **LangChain Graph System**: Node-based workflow editor for AI chains
-- **UPDL Nodes** (Universo Platformo Definition Language): Custom node types for platform-specific operations
-- Advanced integrations and plugins
-- Real-time collaboration features
-- Advanced analytics and monitoring
+Build the Universal Platform Definition Language system and AI-assisted development:
 
-**Dependencies:** Phase 4 complete (requires all core domains)
+**UPDL Node System:**
+- updl package with node definitions
+- 7 core high-level nodes for 3D/AR/VR scene description
+- Node interfaces and type definitions
+- Integration with visual flow editor
+
+**UPDL Processing:**
+- @universo/updl-processor package
+- Flow data to UPDL conversion
+- Multi-scene support
+- Template-agnostic processing pipeline
+- Validation and transformation utilities
+
+**Space Builder (AI-Assisted Development):**
+- space-builder-frt, space-builder-srv packages
+- Natural language prompt to flow graph conversion
+- LLM integration for code generation
+- UPDL node generation from descriptions
+- Model selection and configuration
+- Test mode for development
+
+**LangChain Integration (if applicable):**
+- Node-based workflow editor for AI chains
+- LangChain node definitions and execution
+- Integration with UPDL system
+
+**Dependencies:** Phase 4 complete (requires Spaces domain and all infrastructure)
 
 **Success Criteria:**
-- Users can create and edit visual workflows in Canvases
-- LangChain nodes execute correctly with proper error handling
-- UPDL nodes provide platform-specific operations
-- Real-time updates work across multiple users
+- UPDL nodes are defined and documented
+- Users can create UPDL structures through visual editor
+- UPDLProcessor converts flow data to valid UPDL
+- Space Builder generates valid flows from natural language
+- LLM integration works reliably
+- Node validation prevents invalid structures
 - System scales to support expected user load
-- Advanced features integrate without breaking core functionality
+- Documentation includes UPDL specification and examples
+
+### Phase 6: Templates and Publication
+
+**Scope:**
+Build the template system for multi-platform export and publication:
+
+**Template Registry System:**
+- Template registration and discovery
+- Dynamic template loading
+- Template interface standardization
+- Template versioning
+
+**Template Packages:**
+- template-quiz package (AR.js educational quizzes)
+- template-mmoomm package (PlayCanvas MMO experiences)
+- Additional templates for other platforms (Three.js, Babylon.js, A-Frame)
+- Template builders that consume UPDL
+
+**Publication System:**
+- publish-frt, publish-srv packages
+- UPDL to platform-specific output conversion
+- Template selection and configuration
+- Build and validation pipeline
+- Publication URL system (/p/{uuid})
+- Public/private publication options
+- Version management
+- Embedding options
+
+**Dependencies:** Phase 5 complete (requires UPDL system)
+
+**Success Criteria:**
+- Template registry discovers and loads templates dynamically
+- At least 2 template packages functional (AR.js and one other)
+- Users can select template and export UPDL projects
+- Publication generates valid output for target platforms
+- Published projects accessible via clean URLs
+- Embedding works correctly
+- Version control prevents breaking published projects
+- Documentation includes template development guide
+
+### Phase 7: Advanced Features and Scaling (Optional/Future)
+
+**Scope:**
+Advanced features for scaling and enterprise use:
+
+**Multiplayer Infrastructure:**
+- multiplayer-colyseus-srv or alternative
+- Real-time networking
+- State synchronization
+- Player connection management
+- Integration with templates that support multiplayer
+
+**Performance and Scaling:**
+- Load testing infrastructure (Artillery or k6)
+- Performance monitoring and metrics
+- Caching strategies
+- CDN integration for published projects
+- Database query optimization
+
+**Advanced Collaboration:**
+- Real-time collaborative editing
+- Conflict resolution
+- Version control for spaces
+- Team management features
+
+**Extended Internationalization:**
+- Additional language support beyond EN/RU
+- RTL language support
+- Cultural localization
+
+**Dependencies:** Phase 6 complete
+
+**Success Criteria:**
+- Multiplayer works reliably with low latency
+- System handles expected load with acceptable performance
+- Real-time collaboration prevents data loss
+- Additional languages fully supported
+- Performance benchmarks met
 
 ### Phase Dependencies Summary
 
 ```
-Phase 1 (Foundation)
+Phase 1 (Foundation: Setup, Turborepo, Types)
     ↓
-Phase 2 (Core Infrastructure)
+Phase 2 (Core Infrastructure: Auth, DB, Utils, Profile)
     ↓
-Phase 3 (Clusters - First Domain)
+Phase 3 (Workspace & First Domain: Uniks → Clusters)
     ↓
-Phase 4 (Additional Domains)
+Phase 4 (Additional Domains: Metaverses, Spaces, Analytics)
     ↓
-Phase 5 (Advanced Features)
+Phase 5 (UPDL & Visual Programming: Nodes, Space Builder)
+    ↓
+Phase 6 (Templates & Publication: Export, Share)
+    ↓
+Phase 7 (Advanced Features: Multiplayer, Scaling) [Optional]
 ```
 
 ### Implementation Principles
@@ -423,5 +652,7 @@ Phase 5 (Advanced Features)
 - Maintain consistency in package structure, naming, and architecture across all phases
 - Each phase requires full testing and documentation before proceeding to next
 - Breaking changes require major version bump and migration guide
+- Templates must be modular and independently maintainable
+- Publication system must be template-agnostic
 
-**Version**: 1.1.0 | **Ratified**: 2025-11-15 | **Last Amended**: 2025-11-16
+**Version**: 1.2.0 | **Ratified**: 2025-11-15 | **Last Amended**: 2025-11-17

@@ -1,0 +1,77 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "title": "Turborepo Pipeline Configuration",
+  "description": "Schema for turbo.json pipeline configuration in Universo Platformo monorepo",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "globalDependencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Files that invalidate all caches when changed",
+      "examples": [["**/.env.*local", "tsconfig.json"]]
+    },
+    "pipeline": {
+      "type": "object",
+      "description": "Task definitions",
+      "required": ["build", "dev", "lint", "test", "type-check"],
+      "properties": {
+        "build": {
+          "$ref": "#/definitions/TaskConfig",
+          "description": "Build all packages and apps"
+        },
+        "dev": {
+          "$ref": "#/definitions/TaskConfig",
+          "description": "Start development servers"
+        },
+        "lint": {
+          "$ref": "#/definitions/TaskConfig",
+          "description": "Run linting"
+        },
+        "test": {
+          "$ref": "#/definitions/TaskConfig",
+          "description": "Run tests"
+        },
+        "type-check": {
+          "$ref": "#/definitions/TaskConfig",
+          "description": "Run TypeScript type checking"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "TaskConfig": {
+      "type": "object",
+      "properties": {
+        "dependsOn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tasks this depends on. Use '^task' for dependencies in dependent packages"
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Output directories/files for caching"
+        },
+        "cache": {
+          "type": "boolean",
+          "description": "Whether to cache this task's results",
+          "default": true
+        },
+        "persistent": {
+          "type": "boolean",
+          "description": "Whether this is a long-running task (like dev server)",
+          "default": false
+        }
+      }
+    }
+  }
+}

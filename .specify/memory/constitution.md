@@ -1,10 +1,37 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version Change: 1.1.0 → 1.2.0
+Version Change: 1.2.0 → 1.3.0
+Reason: Comprehensive architectural patterns analysis from universo-platformo-react
+
+Previous Update (1.1.0 → 1.2.0):
 Reason: Major architectural analysis incorporating patterns from universo-platformo-react
 
-Modified Principles:
+Modified Principles (1.2.0 → 1.3.0):
+  - **Phase 2: Core Infrastructure**: Expanded infrastructure packages from 3 to 6, added @universo/ui-components, @universo/rest-docs, detailed workspace-scoped routing pattern
+  - **Phase 3: Workspace and First Domain**: Added optional Projects domain
+  - **Phase 6: Templates and Publication**: Added template builder interface specification
+  - **Security Standards**: Enhanced with specific policies, CI/CD requirements, and dependency management
+  - **Testing Requirements**: Added Next.js-specific patterns, coverage requirements, test organization
+  - **Documentation Standards**: Added package README structure template and review process
+
+Added Sections (1.3.0):
+  - **Workspace-Scoped Routing Pattern**: Consistent URL structure for all domain APIs
+  - **Template Builder Interface**: TypeScript interface for all template packages
+  - **Security Standards**: Comprehensive security policies and procedures
+  - **Testing Standards**: Detailed testing requirements for all package types
+  - **Documentation Structure**: Standard README template and organization
+
+Key Architectural Enhancements (1.3.0):
+  - Infrastructure packages: Expanded to 6 core packages (@universo/types, @universo/utils, @universo/api-client, @universo/i18n, @universo/ui-components, @universo/rest-docs)
+  - Projects domain: Added as optional Phase 3 domain
+  - Routing pattern: Workspace-scoped API routing for all domains
+  - Template system: Formalized interface for consistent template development
+  - Security: Explicit policies for vulnerability management and dependency security
+  - Testing: Next.js-specific testing patterns and coverage requirements
+  - Documentation: Standardized structure for package README files
+
+Modified Principles (1.1.0 → 1.2.0):
   - **Technology Stack Requirements**: Added Turborepo, tsdown, Husky, i18next, specific ORM options, updated auth to Supabase Auth Helpers, MUI v6, client state management options, API documentation tools, Docker
   - **Technology Guidelines**: Expanded with Next.js-specific patterns, MUI v6 setup, dual build requirements, package documentation requirements
   - **Version Management**: Enhanced with package standards
@@ -322,6 +349,205 @@ When reviewers disagree or requirements conflict:
 4. Project lead makes final decision with documented rationale
 5. Update constitution if pattern should be codified
 
+## Security Standards
+
+### Security File Requirements
+
+- `SECURITY.md` MUST exist in repository root (Phase 1)
+- Must document vulnerability reporting process
+- Must list security contact information
+- Must specify supported versions and security policy
+
+### Dependency Security
+
+**Security Management:**
+- Run `pnpm audit` before every release and address issues
+- Critical vulnerabilities MUST be patched within 48 hours of disclosure
+- High vulnerabilities MUST be patched within 1 week
+- Medium vulnerabilities should be patched within 1 month
+- Use `pnpm overrides` for immediate security patches when needed
+- Document all security-related overrides with justification
+
+**CI/CD Security Checks:**
+- Automated security scanning in pull requests
+- Dependency vulnerability scanning (Dependabot, Snyk, or similar)
+- CodeQL scanning for code vulnerabilities
+- No merge allowed with unresolved critical or high vulnerabilities
+- Security scan results must be reviewed before merging
+
+### Environment Security
+
+- Never commit `.env.local`, `.env.production`, or similar files with secrets
+- All environment variables MUST be typed and validated using TypeScript
+- Use validation libraries (e.g., Zod) for runtime environment variable checks
+- Sensitive data MUST be stored in Supabase Vault or secure secrets manager
+- Document required environment variables in README files
+- Provide `.env.example` files without actual secrets
+
+### Code Security
+
+- Follow OWASP security best practices
+- Sanitize all user inputs before processing
+- Use parameterized queries for database operations
+- Implement rate limiting on public API endpoints
+- Use HTTPS for all external communications
+- Never log sensitive information (passwords, tokens, PII)
+
+## Testing Standards
+
+### Testing Stack
+
+**Required Tools:**
+- **Test Runner**: Vitest ^2.1.8 or higher
+- **React Testing**: @testing-library/react ^14.3.1
+- **DOM Simulation**: happy-dom ^16.14.2 (faster than jsdom)
+- **Coverage**: @vitest/coverage-v8 ^2.1.4
+- **User Interaction**: @testing-library/user-event ^14.6.1
+
+### Coverage Requirements
+
+**Minimum Coverage Targets:**
+- Infrastructure packages (@universo/*): 80% coverage
+- Domain packages (*-frt, *-srv): 70% coverage
+- Template packages (@universo/template-*): 60% coverage
+- All tests MUST pass before merging to main
+
+**Coverage Measurement:**
+- Line coverage (primary metric)
+- Branch coverage (conditional logic)
+- Function coverage (all functions executed)
+
+### Next.js Specific Testing
+
+**Server Components:**
+- Mock data fetching functions
+- Test rendered output with expected data
+- Verify correct props passed to Client Components
+
+**Client Components:**
+- Use @testing-library/react for interactions
+- Test user events and state changes
+- Verify accessibility with jest-axe
+
+**API Routes:**
+- Test with direct function calls or supertest
+- Mock Supabase client and database operations
+- Verify response status codes and payloads
+
+**Server Actions:**
+- Test with direct async function calls
+- Mock database and external service calls
+- Verify return values and error handling
+
+### Test Organization
+
+```
+package/
+└── base/
+    ├── src/
+    │   ├── components/
+    │   │   ├── Button.tsx
+    │   │   └── Button.test.tsx    # Colocated tests
+    │   └── utils/
+    │       ├── format.ts
+    │       └── format.test.ts     # Colocated tests
+    └── vitest.config.ts
+```
+
+**Test File Naming:**
+- Unit tests: `*.test.ts` or `*.test.tsx`
+- Integration tests: `*.integration.test.ts`
+- E2E tests: `*.e2e.test.ts`
+
+## Documentation Standards
+
+### Package README Structure
+
+Every package MUST include `README.md` (English) and `README-RU.md` (Russian) with this structure:
+
+```markdown
+# Package Name
+
+[Badges: Version, License, Build Status]
+
+## Overview
+Brief description (2-3 sentences explaining purpose)
+
+## Features
+- Feature 1: Description
+- Feature 2: Description
+- Feature 3: Description
+
+## Installation
+\`\`\`bash
+pnpm add @universo/package-name
+\`\`\`
+
+## Usage
+
+### Basic Usage
+\`\`\`typescript
+// Code example with explanation
+\`\`\`
+
+### Advanced Usage
+\`\`\`typescript
+// Advanced code example
+\`\`\`
+
+## API Reference
+
+### Functions
+Document exported functions with parameters and return types
+
+### Types
+Document exported TypeScript interfaces and types
+
+### Components (for UI packages)
+Document React components with props
+
+## Architecture
+High-level architecture diagram or description of package structure
+
+## Development
+
+### Setup
+\`\`\`bash
+pnpm install
+\`\`\`
+
+### Building
+\`\`\`bash
+pnpm build
+\`\`\`
+
+### Testing
+\`\`\`bash
+pnpm test
+\`\`\`
+
+## Contributing
+Reference to main CONTRIBUTING.md
+
+## License
+Reference to LICENSE file
+```
+
+### Documentation Templates
+
+**Phase 1 Deliverables:**
+- Create `packages/TEMPLATE-README.md` as English template
+- Create `packages/TEMPLATE-README-RU.md` as Russian template  
+- Create `packages/TEMPLATE-README-GUIDE.md` with usage instructions
+
+### Documentation Review Process
+
+- Russian translation MUST be reviewed for accuracy by bilingual reviewer
+- Technical terminology MUST be consistent across both languages
+- Code examples MUST be tested and work correctly
+- Documentation MUST be updated in same PR as code changes
+- Screenshots and diagrams MUST have bilingual annotations when containing text
+
 ## Governance
 
 ### Authority & Compliance
@@ -403,12 +629,45 @@ The platform follows a phased implementation approach, building complexity incre
 - User management and session handling
 - Profile management (profile-frt, profile-srv packages)
 - Authorization middleware for Server Components and API routes
-- Shared infrastructure packages:
+- Workspace-scoped API routing pattern implementation
+- Shared infrastructure packages (all required):
+  - @universo/types (shared TypeScript types and interfaces)
   - @universo/utils (utility functions, UPDLProcessor foundation)
-  - @universo/i18n (internationalization runtime)
-  - @universo/api-client (type-safe API client)
+  - @universo/i18n (internationalization runtime with next-intl)
+  - @universo/api-client (type-safe API client supporting both API routes and Server Actions)
+  - @universo/ui-components (shared Next.js UI components with MUI v6)
+  - @universo/rest-docs (API documentation with TypeDoc + OpenAPI)
 - API documentation infrastructure (TypeDoc + OpenAPI)
 - Comprehensive test coverage for core functionality
+
+**Workspace-Scoped Routing Pattern:**
+
+All domain operations MUST be scoped to workspaces (Uniks). The following routing pattern MUST be used consistently:
+
+```
+Next.js Route Structure:
+app/
+├── api/
+│   └── uniks/
+│       └── [unikId]/
+│           ├── {domain}/
+│           │   └── route.ts          # GET (list), POST (create)
+│           └── {domain}/
+│               └── [itemId]/
+│                   └── route.ts      # GET, PUT, DELETE
+
+Example:
+GET    /api/uniks/:unikId/clusters                    # List
+POST   /api/uniks/:unikId/clusters                    # Create
+GET    /api/uniks/:unikId/clusters/:clusterId         # Get
+PUT    /api/uniks/:unikId/clusters/:clusterId         # Update
+DELETE /api/uniks/:unikId/clusters/:clusterId         # Delete
+```
+
+All operations MUST:
+- Validate user has access to the specified workspace
+- Use workspace context for authorization
+- Follow consistent URL structure across all domains
 
 **Dependencies:** Phase 1 complete
 
@@ -419,8 +678,10 @@ The platform follows a phased implementation approach, building complexity incre
 - MUI components render correctly in Server and Client Components
 - Protected routes enforce authentication in App Router
 - Profile management fully functional
-- Shared infrastructure packages provide dual build output (CJS + ESM)
-- API documentation is generated and accessible
+- Workspace-scoped routing pattern implemented and documented
+- All 6 infrastructure packages provide dual build output (CJS + ESM)
+- @universo/ui-components provides Server/Client Component wrappers for MUI
+- API documentation is generated and accessible via @universo/rest-docs
 - All core infrastructure has >80% test coverage
 
 ### Phase 3: Workspace and First Domain
@@ -443,6 +704,14 @@ Implement workspace management and the first complete functional domain:
 - **Resources**: Items within Domains
 - Three-tier entity structure as template for other features
 - Proper authorization and access control
+
+**Projects Domain** - Optional Third:
+- projects-frt, projects-srv packages
+- Workspace-level project management
+- Project organization within Uniks
+- CRUD operations for projects
+- Integration with other domain entities (optional)
+- Can be implemented in Phase 4 if time constraints exist
 
 **Dependencies:** Phase 2 complete (requires auth, database, UI framework, profile)
 
@@ -557,8 +826,50 @@ Build the template system for multi-platform export and publication:
 **Template Registry System:**
 - Template registration and discovery
 - Dynamic template loading
-- Template interface standardization
+- Template interface standardization (see Template Builder Interface below)
 - Template versioning
+
+**Template Builder Interface:**
+
+All template packages MUST implement the following TypeScript interface:
+
+```typescript
+export interface TemplateBuilder {
+  /** Unique template identifier */
+  name: string;
+  
+  /** Semantic version */
+  version: string;
+  
+  /** Human-readable display name */
+  displayName: string;
+  
+  /** Build UPDL space into platform-specific output */
+  build(updl: UPDLSpace): Promise<string | BuildOutput>;
+  
+  /** Validate UPDL is compatible with this template */
+  validate(updl: UPDLSpace): ValidationResult;
+  
+  /** Get template configuration schema */
+  getConfigSchema(): ConfigSchema;
+}
+```
+
+**Template Package Structure:**
+
+```
+template-{name}/
+└── base/
+    ├── src/
+    │   ├── builders/      # UPDL → Platform converters
+    │   ├── components/    # Platform-specific generators
+    │   ├── utils/         # Template utilities
+    │   └── index.ts       # Export TemplateBuilder implementation
+    ├── dist/              # CJS + ESM + Types
+    ├── package.json
+    ├── README.md
+    └── README-RU.md
+```
 
 **Template Packages:**
 - template-quiz package (AR.js educational quizzes)
@@ -655,4 +966,4 @@ Phase 7 (Advanced Features: Multiplayer, Scaling) [Optional]
 - Templates must be modular and independently maintainable
 - Publication system must be template-agnostic
 
-**Version**: 1.2.0 | **Ratified**: 2025-11-15 | **Last Amended**: 2025-11-17
+**Version**: 1.3.0 | **Ratified**: 2025-11-17 | **Last Amended**: 2025-11-17

@@ -2,7 +2,8 @@
 
 **Feature**: 001-nextjs-foundation-setup  
 **Date**: 2025-11-17  
-**Status**: In Progress
+**Updated**: 2025-11-17 (Enhanced with 2024-2025 best practices)  
+**Status**: Enhanced
 
 ## Research Objectives
 
@@ -77,59 +78,105 @@ Use Turborepo with the following task pipeline configuration:
 - Investigate Emotion cache configuration for SSR
 - Study ColorScheme API for theme management
 - Examine when MUI components can be Server Components vs requiring Client Components
+- Research latest 2024-2025 integration patterns
 
 **Decision**:
 
 Use MUI v6 with the following integration pattern:
 
-1. **Theme Provider in Root Layout**:
-   - Create `src/theme/ThemeRegistry.tsx` as a Client Component
-   - Wrap app with Emotion cache and MUI theme
-   - Use ColorScheme API for theme configuration
+**1. Required Packages**:
+```bash
+npm install @mui/material-nextjs @mui/material @emotion/react @emotion/styled
+```
 
-2. **Component Usage Patterns**:
-   - **Server Components**: MUI Typography, Box, Stack, Container (non-interactive layout components)
-   - **Client Components**: All interactive components (Button, TextField, Dialog, etc.) - mark with `"use client"`
-   - **Hybrid**: Compose Server Components that import Client Components for interactive parts
+**Note**: The `@mui/material-nextjs` package provides Next.js-specific helpers like `AppRouterCacheProvider`.
 
-3. **SSR Configuration**:
-   ```typescript
-   // app/ThemeRegistry.tsx
-   'use client';
-   import { CacheProvider } from '@emotion/react';
-   import { ThemeProvider } from '@mui/material/styles';
-   import CssBaseline from '@mui/material/CssBaseline';
-   import createEmotionCache from './createEmotionCache';
-   
-   const cache = createEmotionCache();
-   
-   export default function ThemeRegistry({ children }) {
-     return (
-       <CacheProvider value={cache}>
-         <ThemeProvider theme={theme}>
-           <CssBaseline />
-           {children}
-         </ThemeProvider>
-       </CacheProvider>
-     );
-   }
-   ```
+**2. Theme Provider in Root Layout** (`app/layout.tsx`):
+```typescript
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import theme from '../theme';
+import { Roboto } from 'next/font/google';
+
+// Font optimization with Next.js font loader
+const roboto = Roboto({
+  weight: ['300', '400', '500', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-roboto',
+});
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en" className={roboto.variable}>
+      <body>
+        <AppRouterCacheProvider>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            {children}
+          </ThemeProvider>
+        </AppRouterCacheProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+**3. Component Usage Patterns**:
+- **⚠️ IMPORTANT**: ALL MUI components must be Client Components with `"use client"` directive
+- **Server Components**: Use for data fetching and business logic, then pass data to MUI Client Components
+- **Hybrid Pattern**: Server Components that import MUI Client Components for rendering
+
+**Example**:
+```typescript
+// Server Component (no MUI imports)
+async function getData() {
+  const res = await fetch('...');
+  return res.json();
+}
+
+export default async function Page() {
+  const data = await getData();
+  return <ClientPage data={data} />;
+}
+
+// Client Component (with MUI)
+'use client';
+import { Button, Typography } from '@mui/material';
+
+export function ClientPage({ data }) {
+  return <Typography>{data.title}</Typography>;
+}
+```
+
+**4. Optional Custom Cache Configuration**:
+```typescript
+<AppRouterCacheProvider options={{ key: 'css' }}>
+  {children}
+</AppRouterCacheProvider>
+```
 
 **Rationale**:
-- **Emotion Cache**: Required for Next.js App Router to prevent style flash on SSR
+- **@mui/material-nextjs**: Official package for Next.js integration with proper SSR support
+- **AppRouterCacheProvider**: Ensures Emotion styles inject correctly during streamed rendering
+- **Font Optimization**: Next.js font loader provides optimal performance and FOUT prevention
 - **ColorScheme API**: Modern theming with better dark mode support
-- **Selective Client Components**: Minimizes JavaScript bundle by keeping layout Server Components
+- **Current Limitation**: MUI v6 components cannot be Server Components (as of 2024), full support planned for future
 - **Root Layout Pattern**: Single theme provider at top level prevents duplication
 
 **Alternatives Considered**:
 - **MUI v5**: Lacks ColorScheme API, older theming patterns
 - **Styled Components**: Would require different configuration, Emotion is MUI's default
 - **CSS Modules**: Would lose MUI's theming capabilities
+- **Manual Emotion Cache**: `@mui/material-nextjs` handles this automatically
 
 **References**:
 - [MUI Next.js App Router Guide](https://mui.com/material-ui/integrations/nextjs/)
+- [MUI Blog: App Router Support](https://mui.com/blog/mui-next-js-app-router/)
 - [MUI ColorScheme API](https://mui.com/material-ui/experimental-api/css-theme-variables/)
 - [Next.js Server Components](https://nextjs.org/docs/app/building-your-application/rendering/server-components)
+- [Next.js Font Optimization](https://nextjs.org/docs/app/building-your-application/optimizing/fonts)
 
 ---
 
@@ -142,54 +189,152 @@ Use MUI v6 with the following integration pattern:
 - Study Next.js middleware patterns for route protection
 - Investigate session management with Server Components
 - Examine cookie-based authentication in App Router
+- Research 2024-2025 security best practices
 
 **Decision**:
 
-Use Supabase Auth Helpers with Next.js middleware pattern:
+Use Supabase Auth with `@supabase/ssr` package and Next.js middleware pattern:
 
-1. **Middleware Configuration** (`middleware.ts`):
-   ```typescript
-   import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
-   import { NextResponse } from 'next/server';
-   import type { NextRequest } from 'next/server';
-   
-   export async function middleware(req: NextRequest) {
-     const res = NextResponse.next();
-     const supabase = createMiddlewareClient({ req, res });
-     await supabase.auth.getSession(); // Refreshes session
-     return res;
-   }
-   ```
+**1. Required Packages**:
+```bash
+npm install @supabase/supabase-js @supabase/ssr
+```
 
-2. **Protected Routes Pattern**:
-   - Use middleware matcher to protect specific routes
-   - Server Components can access session with `createServerComponentClient`
-   - Client Components use `createClientComponentClient`
+**Note**: Use `@supabase/ssr` for Server-Side Rendering support with Next.js App Router.
 
-3. **Route Protection**:
-   ```typescript
-   export const config = {
-     matcher: [
-       '/dashboard/:path*',
-       '/api/protected/:path*',
-     ],
-   };
-   ```
+**2. Client Creation Files**:
+
+**Client-side** (`utils/supabase/client.ts`):
+```typescript
+import { createBrowserClient } from '@supabase/ssr';
+
+export function createClient() {
+  return createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+}
+```
+
+**Server-side** (`utils/supabase/server.ts`):
+```typescript
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+
+export function createClient() {
+  const cookieStore = cookies();
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value;
+        },
+      },
+    }
+  );
+}
+```
+
+**3. Middleware Configuration** (`middleware.ts`):
+```typescript
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { createServerClient } from '@supabase/ssr';
+
+export async function middleware(request: NextRequest) {
+  const response = NextResponse.next();
+  
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value;
+        },
+        set(name: string, value: string, options: any) {
+          response.cookies.set({ name, value, ...options });
+        },
+        remove(name: string, options: any) {
+          response.cookies.set({ name, value: '', ...options });
+        },
+      },
+    }
+  );
+
+  // Refresh session
+  const { data: { session } } = await supabase.auth.getSession();
+
+  // Protected route logic
+  const protectedRoutes = ['/dashboard', '/profile', '/settings'];
+  const isProtectedRoute = protectedRoutes.some(route =>
+    request.nextUrl.pathname.startsWith(route)
+  );
+
+  if (isProtectedRoute && !session) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  // Redirect logged-in users away from auth pages
+  if (request.nextUrl.pathname === '/login' && session) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
+
+  return response;
+}
+
+export const config = {
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
+};
+```
+
+**4. Security Best Practices**:
+- **Cookie Configuration**: Ensure cookies use `httpOnly`, `secure`, and `sameSite=lax` attributes
+- **Type Safety**: Use TypeScript strict mode for session objects
+- **RBAC with Type Guards**:
+  ```typescript
+  function isAdmin(user: Session): user is AdminSession {
+    return user.user_metadata?.role === 'admin';
+  }
+  ```
+- **Environment Variables**: Type and validate using Zod or similar library
+- **JWT Expiry**: Keep expiration short (10-15 minutes) for security
+
+**5. Server Actions Integration**:
+```typescript
+'use server'
+import { revalidatePath } from 'next/cache';
+import { createClient } from '@/utils/supabase/server';
+
+export async function signOut() {
+  const supabase = createClient();
+  await supabase.auth.signOut();
+  revalidatePath('/');
+}
+```
 
 **Rationale**:
-- **Supabase Auth Helpers**: Official library for Next.js integration, handles cookie management
-- **Middleware Pattern**: Runs before request, efficient for route protection
-- **Session Refresh**: Middleware automatically refreshes auth tokens
-- **Type Safety**: Full TypeScript support with Supabase types
+- **@supabase/ssr**: Official package for Server-Side Rendering, replaces older auth-helpers
+- **Split Client Pattern**: Separate browser and server clients for proper SSR handling
+- **Middleware Pattern**: Runs before request, efficient for route protection and session refresh
+- **Cookie Management**: Automatic token refresh, secure session handling
+- **Type Safety**: Full TypeScript support with Supabase types and type guards
+- **Server Actions**: Seamless integration with Next.js Server Actions
 
 **Alternatives Considered**:
-- **Passport.js**: Express-centric, not ideal for Next.js middleware
-- **NextAuth.js**: Adds abstraction layer, Supabase Auth Helpers more direct
-- **Custom JWT Handling**: More complex, reinvents the wheel
+- **Passport.js**: Express-centric, not ideal for Next.js middleware or App Router
+- **NextAuth.js**: Adds abstraction layer, Supabase Auth Helpers more direct for Supabase
+- **Custom JWT Handling**: More complex, reinvents the wheel, loses Supabase features
 
 **References**:
-- [Supabase Auth Helpers for Next.js](https://supabase.com/docs/guides/auth/auth-helpers/nextjs)
+- [Supabase Auth with Next.js](https://supabase.com/docs/guides/auth/quickstarts/nextjs)
+- [Supabase SSR Package](https://supabase.com/docs/guides/auth/auth-helpers/nextjs)
 - [Next.js Middleware](https://nextjs.org/docs/app/building-your-application/routing/middleware)
+- [Next.js Authentication Guide](https://nextjs.org/docs/14/app/building-your-application/authentication)
 
 ---
 
@@ -202,6 +347,7 @@ Use Supabase Auth Helpers with Next.js middleware pattern:
 - Evaluate type generation and TypeScript integration
 - Assess Server Actions compatibility
 - Review migration systems and schema management
+- Research 2024-2025 best practices from Context7 and web
 
 **Decision**:
 
@@ -209,6 +355,7 @@ Use Supabase Auth Helpers with Next.js middleware pattern:
 
 Use Prisma ORM with database abstraction layer:
 
+**1. Basic Client Setup**:
 ```typescript
 // packages/db-srv/base/src/client.ts
 import { PrismaClient } from '@prisma/client';
@@ -223,12 +370,128 @@ export interface IUserRepository {
 }
 ```
 
+**2. Next.js API Route Pattern**:
+```typescript
+// app/api/users/route.ts
+import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+
+export async function GET() {
+  const users = await prisma.user.findMany({
+    include: { organization: true },
+  });
+  return NextResponse.json(users);
+}
+
+export async function POST(request: Request) {
+  const body = await request.json();
+  const user = await prisma.user.create({
+    data: {
+      email: body.email,
+      name: body.name,
+      organization: {
+        connect: { id: body.organizationId },
+      },
+    },
+    include: { organization: true },
+  });
+  return NextResponse.json(user);
+}
+```
+
+**3. Migration Management**:
+```bash
+# Generate and apply migration based on schema changes
+npx prisma migrate dev --name add-user-table
+
+# Apply migrations in production
+npx prisma migrate deploy
+```
+
+**4. Database Seeding with TypeScript**:
+```typescript
+// prisma/seed.ts
+import { PrismaClient, Prisma } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+const userData: Prisma.UserCreateInput[] = [
+  {
+    name: 'Alice',
+    email: 'alice@example.com',
+    posts: {
+      create: [
+        {
+          title: 'First Post',
+          content: 'Hello World',
+          published: true,
+        },
+      ],
+    },
+  },
+];
+
+async function main() {
+  for (const u of userData) {
+    await prisma.user.create({ data: u });
+  }
+}
+
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
+```
+
+**5. Prisma Configuration** (`prisma.config.ts`):
+```typescript
+import 'dotenv/config';
+import { defineConfig, env } from 'prisma/config';
+
+export default defineConfig({
+  schema: 'prisma/schema.prisma',
+  migrations: {
+    path: 'prisma/migrations',
+    seed: `tsx prisma/seed.ts`,
+  },
+  engine: 'classic',
+  datasource: {
+    url: env('DATABASE_URL'),
+  },
+});
+```
+
+**6. Server Actions Integration**:
+```typescript
+// app/actions/users.ts
+'use server'
+import { prisma } from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
+
+export async function createUser(formData: FormData) {
+  const name = formData.get('name') as string;
+  const email = formData.get('email') as string;
+  
+  await prisma.user.create({
+    data: { name, email },
+  });
+  
+  revalidatePath('/users');
+}
+```
+
 **Rationale**:
 - **Type Safety**: Excellent TypeScript support with auto-generated types
 - **Server Actions**: Works seamlessly with Server Actions (no edge runtime issues in most cases)
 - **Developer Experience**: Best-in-class schema definition and migrations
 - **Community**: Largest ecosystem and Vercel backing
 - **Abstraction Ready**: Easy to wrap in repository pattern for database abstraction
+- **Migration System**: Robust versioning and team collaboration support
+- **Seeding**: Built-in TypeScript support for database seeding
 
 **Comparison**:
 
@@ -240,6 +503,7 @@ export interface IUserRepository {
 | Migrations | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
 | Learning Curve | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐ |
 | Edge Runtime | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐ |
+| Seeding Support | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
 
 **Note**: Drizzle ORM is also excellent and has better edge runtime support. Consider for Phase 2 evaluation if edge deployment becomes priority.
 
@@ -250,6 +514,8 @@ export interface IUserRepository {
 
 **References**:
 - [Prisma with Next.js](https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/nextjs-prisma-client-monorepo)
+- [Prisma Migrations](https://www.prisma.io/docs/concepts/components/prisma-migrate)
+- [Prisma Seeding](https://www.prisma.io/docs/guides/database/seed-database)
 - [Drizzle ORM](https://orm.drizzle.team/)
 - [Next.js Server Actions with Database](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations)
 
@@ -503,15 +769,36 @@ FROM node:18-alpine AS runner
 
 ## Research Summary
 
-All "NEEDS CLARIFICATION" items from Technical Context have been resolved:
+All "NEEDS CLARIFICATION" items from Technical Context have been resolved and enhanced with 2024-2025 best practices:
 
 ✅ **Turborepo Configuration**: Pipeline with proper dependency ordering and caching  
-✅ **MUI v6 + Next.js**: Emotion cache pattern with Server/Client Component guidance  
-✅ **Next.js Auth Middleware**: Supabase Auth Helpers with middleware pattern  
-✅ **ORM Selection**: Prisma recommended for TypeScript and Next.js compatibility  
+✅ **MUI v6 + Next.js**: **ENHANCED** - Added `@mui/material-nextjs` package, font optimization, and clarified Server/Client Component patterns  
+✅ **Next.js Auth Middleware**: **ENHANCED** - Updated to `@supabase/ssr` package with split client pattern and enhanced security practices  
+✅ **ORM Selection**: **ENHANCED** - Prisma recommended with migration, seeding, and Server Actions integration patterns  
 ✅ **Internationalization**: next-intl for runtime i18n, separate files for documentation  
-✅ **State Management**: Server Components first, Zustand for necessary client state  
+✅ **State Management**: Server Components first, Zustand/Jotai for necessary client state  
 ✅ **Docker Setup**: Containerized Supabase, flexible Next.js (host or container)
+
+### Validation Against 2024-2025 Best Practices
+
+**Research Sources**:
+- Web Search: Latest Next.js 14 App Router patterns (November 2024)
+- Context7: Official Next.js and Prisma documentation
+- Industry Standards: Turborepo, MUI, Supabase official guides
+
+**Key Findings**:
+1. All existing research fundamentally correct and aligned with current best practices
+2. Enhanced with specific package names (@mui/material-nextjs, @supabase/ssr)
+3. Added missing patterns (font optimization, seeding, security best practices)
+4. Confirmed Server Components first approach
+5. Validated Prisma as recommended ORM choice
+6. Confirmed Turborepo configuration patterns
+
+**Constitutional Alignment**:
+- ✅ TypeScript-first development maintained
+- ✅ Monorepo architecture validated
+- ✅ Database abstraction principles preserved
+- ✅ Next.js App Router patterns aligned with constitution Phase 1 requirements
 
 **Next Steps**: Proceed to Phase 1 - Design & Contracts
 - Create data-model.md for foundational entities

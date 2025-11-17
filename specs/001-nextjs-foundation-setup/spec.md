@@ -210,10 +210,15 @@ The project includes testing framework configuration and documentation for unit 
 
 ### Functional Requirements
 
+#### Core Modular Architecture (NON-NEGOTIABLE)
+
 - **FR-001**: System MUST be initialized as a PNPM workspace monorepo with a `pnpm-workspace.yaml` configuration file
 - **FR-002**: System MUST include a `packages/` directory at the repository root for organizing feature packages
+- **FR-002a**: **ALL feature functionality MUST be implemented within packages/ directory** - Implementation of feature code outside packages/ is STRICTLY FORBIDDEN
+- **FR-002b**: Root-level directories MAY ONLY contain: configuration files, build scripts, documentation, and .github/ workflows - NO business logic or feature implementation
 - **FR-003**: System MUST use TypeScript for all code with appropriate `tsconfig.json` configurations
 - **FR-004**: System MUST include Next.js configured for full-stack development (frontend and API routes)
+- **FR-004a**: Next.js application(s) SHOULD be organized in `apps/` directory as workspace packages (e.g., `apps/web/`)
 - **FR-005**: System MUST provide bilingual documentation with README.md in English and README-RU.md in Russian with identical structure and content
 - **FR-006**: Documentation MUST follow the guideline that English version is the primary standard and Russian version is an exact translation
 - **FR-007**: System MUST include `.env.example` file with Supabase configuration variables documented
@@ -222,12 +227,16 @@ The project includes testing framework configuration and documentation for unit 
 - **FR-010**: System MUST include `.gitignore` file configured for Node.js, Next.js, and development artifacts
 - **FR-011**: Repository MUST include instructions files in `.github/instructions/` for issues, PRs, labels, and i18n documentation
 - **FR-012**: System MUST support package naming convention with `-frt` suffix for frontend packages and `-srv` suffix for server packages
+- **FR-012a**: When a feature requires BOTH frontend and backend, they MUST be implemented as separate packages (e.g., `clusters-frt` and `clusters-srv`)
 - **FR-013**: Each package MUST include a `base/` directory for core implementation to support future multiple implementations
+- **FR-013a**: ALL package source code MUST reside within the `base/` subdirectory
 - **FR-014**: System MUST include `package.json` at root level with workspace configuration and common scripts
 - **FR-015**: Documentation MUST explain the relationship to Universo Platformo React as the reference implementation
+- **FR-015a**: Documentation MUST reference the modular package structure from universo-platformo-react as the architectural model
 - **FR-016**: System MUST NOT include a `docs/` directory (documentation will be in separate repository)
 - **FR-017**: System MUST NOT include AI agent configuration files (user will create these separately)
 - **FR-018**: README files MUST explain the monorepo structure and package organization
+- **FR-018a**: README files MUST explicitly state that ALL functionality is implemented in packages/ directory
 - **FR-019**: README files MUST include getting started instructions for developers
 - **FR-020**: README files MUST document required Node.js and pnpm versions
 

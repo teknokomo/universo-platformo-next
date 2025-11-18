@@ -108,13 +108,15 @@ This feature is cleared to proceed to Phase 2 (Tasks and Implementation). All de
 
 #### I. Monorepo Architecture ✅ COMPLIANT
 - **Requirement**: Project MUST be structured as PNPM monorepo with packages/ directory
+- **CRITICAL**: ALL functionality MUST be in packages/ directory (NO feature code at root level)
 - **Implementation**: pnpm-workspace.yaml will define workspace, packages/ directory created
-- **Status**: Aligned with constitution
+- **Status**: Aligned with constitution v1.4.0
 
 #### II. Package Separation Pattern ✅ COMPLIANT  
 - **Requirement**: Frontend (-frt) and backend (-srv) packages separated, base/ directories required
+- **CRITICAL**: When feature needs BOTH frontend AND backend, they MUST be separate packages
 - **Implementation**: Package naming convention documented, templates will follow pattern
-- **Status**: Aligned with constitution, initial setup may not have domain packages yet
+- **Status**: Aligned with constitution v1.4.0, initial setup may not have domain packages yet
 
 #### III. TypeScript-First Development ✅ COMPLIANT
 - **Requirement**: All code in TypeScript strict mode, no implicit any
@@ -158,6 +160,15 @@ This feature is cleared to proceed to Phase 2 (Tasks and Implementation). All de
 - Docker ✅
 
 #### Prohibited Patterns ✅ COMPLIANT
+
+**Critical Non-Modular Implementation Prohibitions:**
+- ❌ **NO feature code outside packages/ directory** - COMPLIANT (foundation phase has no features yet)
+- ❌ **NO business logic in root directories** - COMPLIANT (only configuration files at root)
+- ❌ **NO monolithic app without package separation** - COMPLIANT (apps/ planned for Next.js app)
+- ❌ **NO mixed frontend/backend in single package** - COMPLIANT (will use -frt/-srv pattern)
+- ❌ **NO packages without base/ directory** - COMPLIANT (base/ required in all packages)
+
+**Other Prohibited Patterns:**
 - ❌ No docs/ directory (will use external repo) - COMPLIANT
 - ❌ No AI agent config files (grandfathered existing ones OK) - COMPLIANT
 - ❌ No legacy React patterns - COMPLIANT
@@ -183,7 +194,77 @@ This feature is cleared to proceed to Phase 2 (Tasks and Implementation). All de
 
 **No violations identified.** This feature represents the foundation setup that enables all constitutional requirements. All aspects are designed to comply with or establish the patterns required by the constitution.
 
+**Modular Architecture Compliance Statement**: 
+This foundation setup explicitly establishes the packages/ directory structure and documentation patterns that MANDATE all future functionality be implemented within packages. The constitution v1.4.0 now includes:
+- Absolute prohibition on feature code outside packages/
+- Required frontend/backend separation into -frt/-srv packages
+- Mandatory base/ directory in all packages
+- Quality gates that check modular architecture FIRST before code review
+
 **Re-evaluation Point**: After Phase 1 design (data-model.md, contracts/, quickstart.md completed), this section will be reviewed again to ensure design decisions remain compliant.
+
+## Modular Architecture Implementation Guide
+
+### Mandatory Package Structure
+
+**ALL functionality MUST follow this structure:**
+
+```
+packages/
+├── [domain]-frt/          # Frontend package (when frontend needed)
+│   └── base/
+│       ├── src/
+│       │   ├── components/
+│       │   ├── api/
+│       │   └── types/
+│       ├── package.json
+│       ├── README.md
+│       └── README-RU.md
+├── [domain]-srv/          # Backend package (when backend needed)
+│   └── base/
+│       ├── src/
+│       │   ├── routes/
+│       │   ├── services/
+│       │   ├── database/
+│       │   └── types/
+│       ├── package.json
+│       ├── README.md
+│       └── README-RU.md
+└── universo-[name]/       # Shared infrastructure package
+    └── base/
+        ├── src/
+        ├── package.json
+        ├── README.md
+        └── README-RU.md
+```
+
+### Implementation Rules
+
+**MUST DO:**
+1. ✅ Create all feature functionality in packages/ directory
+2. ✅ Separate frontend and backend into distinct packages when both needed
+3. ✅ Include base/ directory in every package
+4. ✅ Use -frt suffix for frontend packages, -srv for backend packages
+5. ✅ Create bilingual documentation (README.md + README-RU.md) for each package
+
+**MUST NOT DO:**
+1. ❌ Implement feature code in root directories
+2. ❌ Mix frontend and backend code in the same package
+3. ❌ Create packages without base/ directory
+4. ❌ Place business logic outside packages/
+5. ❌ Skip package separation when feature needs both frontend and backend
+
+### Validation Checklist for Reviewers
+
+When reviewing any PR, verify FIRST:
+- [ ] All new feature code is in packages/ directory
+- [ ] No business logic in root-level directories
+- [ ] Frontend/backend properly separated (if both present)
+- [ ] Each package has base/ directory
+- [ ] Package names follow conventions
+- [ ] Each package has README.md and README-RU.md
+
+Only after modular architecture is verified, proceed with code quality review.
 
 ## Project Structure
 

@@ -84,7 +84,7 @@ pnpm dev
 - **Система сборки**: Turborepo
 - **База данных**: Supabase (PostgreSQL)
 - **UI фреймворк**: Material UI v6
-- **Аутентификация**: Supabase Auth Helpers
+- **Аутентификация**: Supabase (@supabase/ssr)
 - **Тестирование**: Vitest + React Testing Library
 - **Управление состоянием**: Zustand / Jotai (клиентская сторона)
 - **i18n**: next-intl

@@ -1,11 +1,57 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version Change: 1.3.0 → 1.4.0
+Version Change: 1.4.0 → 1.5.0
+Reason: Technology stack best practices integration with detailed implementation patterns
+
+Previous Update (1.3.0 → 1.4.0):
 Reason: Strengthened modular architecture requirements - MANDATORY packages/ structure
 
-Previous Update (1.2.0 → 1.3.0):
-Reason: Comprehensive architectural patterns analysis from universo-platformo-react
+Modified Principles (1.4.0 → 1.5.0):
+  - **Authentication Technology**: Updated from deprecated "@supabase/auth-helpers-nextjs" to "@supabase/ssr" with implementation details
+  - **Technology Guidelines**: Completely restructured into organized sections:
+    - Next.js 14 App Router Patterns (Server Components, Client Components, Server Actions)
+    - Supabase Authentication Patterns (Browser/Server clients, middleware)
+    - Material UI v6 Integration (AppRouterCacheProvider, SSR setup)
+    - State Management and Data Patterns
+    - Package Development Patterns
+    - Code Quality and Security
+  - **Package Standards - Directory Structure**: Updated to reflect Next.js patterns:
+    - Added components/server/ and components/client/ subdirectories
+    - Added app/ directory for Next.js routes
+    - Added actions/ directory for Server Actions
+    - Replaced Express routes/ with Next.js route.ts patterns
+    - Added lib/ directory for package-specific utilities
+  - **Phase 2 Description**: Updated authentication references from "Auth Helpers" to "@supabase/ssr"
+
+Added Sections (1.5.0):
+  - **Implementation Patterns for Tech Stack**: Comprehensive 500+ line section with:
+    - Next.js 14 App Router code examples (Server/Client Components, Server Actions, API Routes)
+    - Supabase @supabase/ssr implementation (Browser client, Server client, Middleware)
+    - Material UI v6 with App Router (Root layout, Theme configuration)
+    - Testing Patterns for Next.js (Server/Client component tests, API route tests)
+    - Package Export Patterns (Dual component exports, Backend exports)
+
+Key Technical Enhancements (1.5.0):
+  - Deprecated @supabase/auth-helpers-nextjs replaced with @supabase/ssr throughout
+  - Complete code examples for Next.js 14 App Router patterns
+  - Separate client/server Supabase client patterns for SSR compatibility
+  - MUI v6 AppRouterCacheProvider setup for Emotion SSR
+  - Server Component vs Client Component distinction with 'use client' directive
+  - Server Actions with 'use server' directive and revalidation patterns
+  - Middleware implementation for authentication and route protection
+  - Testing patterns for Server Components (async), Client Components, and API routes
+  - Package export patterns distinguishing Server/Client component exports
+  - PNPM catalog recommendation for centralized dependency management
+  - Directory structure adapted from Express to Next.js patterns
+
+Alignment with universo-platformo-react:
+  - Maintains modular architecture with packages/ structure
+  - Preserves -frt/-srv separation pattern
+  - Keeps base/ directory pattern for implementations
+  - Adapts React patterns to Next.js App Router paradigm
+  - Updates authentication from React patterns to Next.js SSR patterns
+  - Replaces Express backend patterns with Next.js API routes
 
 Modified Principles (1.3.0 → 1.4.0):
   - **Section I: Monorepo Architecture**: Added CRITICAL REQUIREMENT stating it is FORBIDDEN to implement feature functionality outside packages/ directory. Added explicit list of only permitted root-level files.
@@ -68,6 +114,8 @@ Follow-up TODOs:
   - Update CI/CD to reject PRs with feature code outside packages/
   - Create architectural decision record for strict modular requirement
   - Update agent instructions with strengthened modular requirements
+  - Create package templates with implementation patterns from constitution
+  - Add scaffolding tool for creating new packages with correct structure
 -->
 
 # Universo Platformo Next Constitution
@@ -204,7 +252,7 @@ Complex features MUST be designed before implementation:
 - **Runtime**: Node.js 18.x or higher
 - **Database**: Supabase (with abstraction for future alternatives including PostgreSQL, MySQL, MongoDB)
 - **ORM**: Prisma, Drizzle ORM, or TypeORM (to be determined in Phase 2 based on Next.js compatibility)
-- **Authentication**: Supabase Auth Helpers for Next.js (replacing Passport.js which is Express-centric)
+- **Authentication**: Supabase with @supabase/ssr package (replacing deprecated @supabase/auth-helpers-nextjs)
 - **UI Framework**: Material UI (MUI) 6.x or latest stable with ColorScheme API
 - **State Management**: Next.js native patterns (Server/Client Components, Server Actions) + Zustand or Jotai for client state
 - **Testing**: Vitest with React Testing Library
@@ -215,22 +263,58 @@ Complex features MUST be designed before implementation:
 
 ### Technology Guidelines
 
+**Next.js 14 App Router Patterns:**
 - Leverage Next.js Server Components for data fetching where possible
 - Use Client Components only when interactive state or browser APIs are required
-- Implement API routes in Next.js App Router structure (`app/api/`)
+- Mark client components explicitly with `'use client'` directive at the top
+- Implement API routes in Next.js App Router structure (`app/api/*/route.ts`)
+- Use Server Actions for mutations and form submissions (mark with `'use server'`)
 - Follow Next.js best practices for routing, layouts, and middleware
+- Prefer Server Components for better performance and smaller bundle sizes
+- Use streaming and Suspense boundaries for progressive rendering
+- Implement middleware in `middleware.ts` at app root for route protection
+
+**Supabase Authentication Patterns (using @supabase/ssr):**
+- Use `@supabase/ssr` package (NOT deprecated @supabase/auth-helpers-nextjs)
+- Create separate Supabase clients for browser and server contexts:
+  - Browser client: Use `createBrowserClient` for client components
+  - Server client: Use `createServerClient` with cookies from `next/headers`
+- Handle authentication in middleware for route protection
+- Manage sessions via HTTP-only cookies for security
+- Use server-side session validation in Server Components and API routes
+- Implement `onAuthStateChange` on client for reactive auth state
+
+**Material UI v6 Integration:**
 - Use MUI v6 with ColorScheme API for consistent theming and dark mode support
-- Configure MUI with Emotion cache for Next.js App Router SSR compatibility
-- Implement authentication using Supabase Auth Helpers (not Passport.js)
-- Use Server Actions for mutations and form submissions
+- Configure MUI with `AppRouterCacheProvider` from `@mui/material-nextjs` for SSR
+- Wrap app with `AppRouterCacheProvider` in root layout
+- Use Next.js font optimization with MUI theme (e.g., Roboto with CSS variables)
+- Create new Emotion cache per request for SSR (handled by AppRouterCacheProvider)
+- Avoid nth-child selectors in styled components for streaming SSR compatibility
+- Ensure consistent theme usage across Server and Client Components
+
+**State Management and Data Patterns:**
 - Use Zustand or Jotai for client-side state management (lighter than Redux)
+- Prefer Server Components with async data fetching over client-side fetching
+- Use Server Actions for form submissions and mutations
+- Implement optimistic UI updates with useOptimistic hook
+- Cache data with Next.js built-in caching (fetch API with cache options)
+
+**Package Development Patterns:**
 - All database access must go through the abstraction layer in `base/` directories
 - Use Turborepo to orchestrate builds across packages with proper dependency caching
 - Shared packages must provide dual build output (CommonJS + ES Modules + TypeScript declarations)
+- Use tsdown for efficient package bundling with dual output
+- Frontend packages should export both Server and Client Component versions where applicable
+- Backend packages should structure code for Next.js API routes (not Express patterns)
+
+**Code Quality and Security:**
 - Use Husky git hooks to enforce code quality before commits
 - Environment variables must be typed and validated in TypeScript
+- Use `NEXT_PUBLIC_` prefix only for truly public environment variables
 - Security vulnerabilities must be addressed before merging to main branch
 - All packages must include README.md and README-RU.md following standard templates
+- Implement PNPM catalog for centralized dependency version management
 
 ### Version Management
 
@@ -251,9 +335,14 @@ package-name/
     │   ├── api/          # API clients (frontend packages)
     │   ├── assets/       # Static resources (icons, images)
     │   ├── components/   # React components (frontend packages)
-    │   ├── routes/       # Express routes (backend packages)
+    │   │   ├── server/   # Server Components (Next.js)
+    │   │   └── client/   # Client Components (Next.js, with 'use client')
+    │   ├── app/          # Next.js App Router routes (frontend)
+    │   ├── actions/      # Server Actions (backend for frontend)
+    │   ├── routes/       # API route handlers (backend packages, route.ts files)
     │   ├── services/     # Business logic (backend packages)
     │   ├── database/     # ORM entities and migrations (backend packages)
+    │   ├── lib/          # Shared utilities for this package
     │   ├── i18n/         # Internationalization resources
     │   ├── types/        # TypeScript type definitions
     │   ├── utils/        # Utility functions
@@ -264,6 +353,16 @@ package-name/
     ├── README.md         # English documentation
     └── README-RU.md      # Russian documentation (exact translation)
 ```
+
+**Directory Usage Guidelines:**
+- `components/server/`: Server Components (async, can fetch data directly)
+- `components/client/`: Client Components (must have `'use client'` directive)
+- `app/`: Next.js routes, layouts, and pages (frontend packages only)
+- `actions/`: Server Actions for mutations (use `'use server'` directive)
+- `routes/`: API route handlers for REST endpoints (backend packages)
+- `services/`: Business logic that can be shared between routes and actions
+- `database/`: ORM models, migrations, and database utilities
+- `lib/`: Package-specific shared code (e.g., Supabase clients, utilities)
 
 **Build Requirements:**
 - Shared packages must use tsdown for dual build output (CJS + ESM + Types)
@@ -289,6 +388,450 @@ package-name/
 - Shared utilities: `@universo/[name]` (e.g., `@universo/types`, `@universo/utils`)
 - Template packages: `@universo/template-[name]` (e.g., `@universo/template-quiz`)
 - Single-sided packages may omit -frt/-srv suffix
+
+### Implementation Patterns for Tech Stack
+
+This section provides specific implementation patterns for the chosen technology stack, ensuring consistency across packages and adherence to best practices.
+
+#### Next.js 14 App Router Patterns
+
+**Server Components (Default):**
+```typescript
+// packages/domain-frt/base/src/components/server/EntityList.tsx
+// NO 'use client' directive - this is a Server Component by default
+
+import { getSupabaseServerClient } from '@/lib/supabase/server';
+
+export async function EntityList() {
+  const supabase = getSupabaseServerClient();
+  const { data, error } = await supabase.from('entities').select('*');
+  
+  if (error) throw error;
+  
+  return (
+    <div>
+      {data.map(entity => (
+        <EntityCard key={entity.id} entity={entity} />
+      ))}
+    </div>
+  );
+}
+```
+
+**Client Components:**
+```typescript
+// packages/domain-frt/base/src/components/client/EntityForm.tsx
+'use client'; // MUST be at the top
+
+import { useState } from 'react';
+import { createEntity } from '@/actions/entities';
+
+export function EntityForm() {
+  const [name, setName] = useState('');
+  
+  async function handleSubmit(formData: FormData) {
+    await createEntity(formData);
+  }
+  
+  return (
+    <form action={handleSubmit}>
+      <input 
+        name="name" 
+        value={name} 
+        onChange={(e) => setName(e.target.value)} 
+      />
+      <button type="submit">Create</button>
+    </form>
+  );
+}
+```
+
+**Server Actions:**
+```typescript
+// packages/domain-frt/base/src/actions/entities.ts
+'use server'; // MUST be at the top
+
+import { getSupabaseServerClient } from '@/lib/supabase/server';
+import { revalidatePath } from 'next/cache';
+
+export async function createEntity(formData: FormData) {
+  const supabase = getSupabaseServerClient();
+  const name = formData.get('name') as string;
+  
+  const { data, error } = await supabase
+    .from('entities')
+    .insert({ name })
+    .select()
+    .single();
+    
+  if (error) throw error;
+  
+  revalidatePath('/entities');
+  return data;
+}
+```
+
+**API Routes (Backend Package):**
+```typescript
+// packages/domain-srv/base/src/routes/entities/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { getSupabaseServerClient } from '@/lib/supabase/server';
+
+export async function GET(request: NextRequest) {
+  const supabase = getSupabaseServerClient();
+  const { data, error } = await supabase.from('entities').select('*');
+  
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+  
+  return NextResponse.json(data);
+}
+
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+  const supabase = getSupabaseServerClient();
+  
+  const { data, error } = await supabase
+    .from('entities')
+    .insert(body)
+    .select()
+    .single();
+    
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+  
+  return NextResponse.json(data, { status: 201 });
+}
+```
+
+#### Supabase Authentication with @supabase/ssr
+
+**Browser Client (Client Components):**
+```typescript
+// packages/auth-frt/base/src/lib/supabase/client.ts
+import { createBrowserClient } from '@supabase/ssr';
+
+export function getSupabaseBrowserClient() {
+  return createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+}
+```
+
+**Server Client (Server Components, API Routes, Server Actions):**
+```typescript
+// packages/auth-srv/base/src/lib/supabase/server.ts
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+
+export function getSupabaseServerClient() {
+  const cookieStore = cookies();
+  
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          try {
+            cookieStore.set({ name, value, ...options });
+          } catch (error) {
+            // Handle cookie setting errors
+          }
+        },
+        remove(name: string, options: CookieOptions) {
+          try {
+            cookieStore.set({ name, value: '', ...options });
+          } catch (error) {
+            // Handle cookie removal errors
+          }
+        },
+      },
+    }
+  );
+}
+```
+
+**Middleware for Route Protection:**
+```typescript
+// middleware.ts (at app root)
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { NextResponse, type NextRequest } from 'next/server';
+
+export async function middleware(request: NextRequest) {
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  });
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          request.cookies.set({ name, value, ...options });
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          });
+          response.cookies.set({ name, value, ...options });
+        },
+        remove(name: string, options: CookieOptions) {
+          request.cookies.set({ name, value: '', ...options });
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          });
+          response.cookies.set({ name, value: '', ...options });
+        },
+      },
+    }
+  );
+
+  const { data: { session } } = await supabase.auth.getSession();
+
+  // Protect routes
+  if (!session && request.nextUrl.pathname.startsWith('/dashboard')) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  return response;
+}
+
+export const config = {
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
+};
+```
+
+#### Material UI v6 with Next.js App Router
+
+**Root Layout Setup:**
+```typescript
+// app/layout.tsx
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import theme from '@/lib/theme';
+import { Roboto } from 'next/font/google';
+
+const roboto = Roboto({
+  weight: ['300', '400', '500', '700'],
+  subsets: ['latin'],
+  variable: '--font-roboto',
+  display: 'swap',
+});
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en" className={roboto.variable}>
+      <body>
+        <AppRouterCacheProvider options={{ key: 'css' }}>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            {children}
+          </ThemeProvider>
+        </AppRouterCacheProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+**Theme Configuration:**
+```typescript
+// packages/ui-components/base/src/lib/theme.ts
+'use client';
+
+import { createTheme } from '@mui/material/styles';
+
+const theme = createTheme({
+  cssVariables: true, // Enable CSS variables for ColorScheme API
+  typography: {
+    fontFamily: 'var(--font-roboto)',
+  },
+  colorSchemes: {
+    light: {
+      palette: {
+        primary: {
+          main: '#1976d2',
+        },
+        secondary: {
+          main: '#dc004e',
+        },
+      },
+    },
+    dark: {
+      palette: {
+        primary: {
+          main: '#90caf9',
+        },
+        secondary: {
+          main: '#f48fb1',
+        },
+      },
+    },
+  },
+});
+
+export default theme;
+```
+
+#### Testing Patterns for Next.js
+
+**Server Component Tests:**
+```typescript
+// packages/domain-frt/base/src/components/server/__tests__/EntityList.test.tsx
+import { render, screen } from '@testing-library/react';
+import { EntityList } from '../EntityList';
+import { vi } from 'vitest';
+
+// Mock Supabase client
+vi.mock('@/lib/supabase/server', () => ({
+  getSupabaseServerClient: () => ({
+    from: () => ({
+      select: () => Promise.resolve({
+        data: [{ id: 1, name: 'Test Entity' }],
+        error: null,
+      }),
+    }),
+  }),
+}));
+
+describe('EntityList Server Component', () => {
+  it('renders entity list', async () => {
+    const { container } = render(await EntityList());
+    expect(container).toHaveTextContent('Test Entity');
+  });
+});
+```
+
+**Client Component Tests:**
+```typescript
+// packages/domain-frt/base/src/components/client/__tests__/EntityForm.test.tsx
+import { render, screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { EntityForm } from '../EntityForm';
+import { vi } from 'vitest';
+
+vi.mock('@/actions/entities', () => ({
+  createEntity: vi.fn(),
+}));
+
+describe('EntityForm Client Component', () => {
+  it('submits form data', async () => {
+    const user = userEvent.setup();
+    render(<EntityForm />);
+    
+    const input = screen.getByRole('textbox');
+    await user.type(input, 'New Entity');
+    
+    const button = screen.getByRole('button', { name: /create/i });
+    await user.click(button);
+    
+    // Assertions
+  });
+});
+```
+
+**API Route Tests:**
+```typescript
+// packages/domain-srv/base/src/routes/entities/__tests__/route.test.ts
+import { GET, POST } from '../route';
+import { NextRequest } from 'next/server';
+import { vi } from 'vitest';
+
+vi.mock('@/lib/supabase/server', () => ({
+  getSupabaseServerClient: () => ({
+    from: () => ({
+      select: () => Promise.resolve({
+        data: [{ id: 1, name: 'Test' }],
+        error: null,
+      }),
+      insert: () => ({
+        select: () => ({
+          single: () => Promise.resolve({
+            data: { id: 1, name: 'New' },
+            error: null,
+          }),
+        }),
+      }),
+    }),
+  }),
+}));
+
+describe('Entities API Routes', () => {
+  it('GET returns entities', async () => {
+    const request = new NextRequest('http://localhost:3000/api/entities');
+    const response = await GET(request);
+    const data = await response.json();
+    
+    expect(data).toHaveLength(1);
+    expect(data[0].name).toBe('Test');
+  });
+  
+  it('POST creates entity', async () => {
+    const request = new NextRequest('http://localhost:3000/api/entities', {
+      method: 'POST',
+      body: JSON.stringify({ name: 'New' }),
+    });
+    const response = await POST(request);
+    const data = await response.json();
+    
+    expect(response.status).toBe(201);
+    expect(data.name).toBe('New');
+  });
+});
+```
+
+#### Package Export Patterns
+
+**Dual Component Export (Server + Client):**
+```typescript
+// packages/ui-components/base/src/index.ts
+// Export both Server and Client component versions
+
+// Server Components (default exports)
+export { EntityList } from './components/server/EntityList';
+export { EntityDetails } from './components/server/EntityDetails';
+
+// Client Components (named exports with 'Client' suffix)
+export { EntityForm as EntityFormClient } from './components/client/EntityForm';
+export { EntityCard as EntityCardClient } from './components/client/EntityCard';
+
+// Shared types
+export type { Entity, EntityFormData } from './types';
+```
+
+**Backend Package Exports:**
+```typescript
+// packages/domain-srv/base/src/index.ts
+// Export services and utilities, NOT route handlers
+
+export { EntityService } from './services/EntityService';
+export { validateEntity } from './utils/validation';
+export type { EntityDTO, CreateEntityDTO } from './types';
+
+// Route handlers are NOT exported - they're used directly by Next.js
+```
 
 ### Prohibited Patterns
 
@@ -684,7 +1227,7 @@ The platform follows a phased implementation approach, building complexity incre
 ### Phase 2: Core Infrastructure
 
 **Scope:**
-- Full authentication system implementation (Supabase Auth Helpers for Next.js)
+- Full authentication system implementation (Supabase with @supabase/ssr package)
 - ORM selection and configuration (Prisma, Drizzle, or TypeORM evaluation)
 - Database abstraction layer implementation with Supabase
 - Material UI theming and component library full setup for App Router
@@ -735,7 +1278,7 @@ All operations MUST:
 **Dependencies:** Phase 1 complete
 
 **Success Criteria:**
-- Users can authenticate with Supabase credentials using Auth Helpers
+- Users can authenticate with Supabase credentials using @supabase/ssr
 - Database operations work through abstraction layer
 - ORM is selected and configured for Next.js patterns
 - MUI components render correctly in Server and Client Components
@@ -1031,4 +1574,4 @@ Phase 7 (Advanced Features: Multiplayer, Scaling) [Optional]
 - Publication system must be template-agnostic
 - **Frontend and backend MUST be in separate packages** when both are needed for a feature
 
-**Version**: 1.4.0 | **Ratified**: 2025-11-17 | **Last Amended**: 2025-11-17
+**Version**: 1.5.0 | **Ratified**: 2025-11-17 | **Last Amended**: 2025-11-18

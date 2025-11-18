@@ -1,43 +1,41 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version Change: 1.2.0 → 1.3.0
+Version Change: 1.3.0 → 1.4.0
+Reason: Strengthened modular architecture requirements - MANDATORY packages/ structure
+
+Previous Update (1.2.0 → 1.3.0):
 Reason: Comprehensive architectural patterns analysis from universo-platformo-react
 
-Previous Update (1.1.0 → 1.2.0):
-Reason: Major architectural analysis incorporating patterns from universo-platformo-react
+Modified Principles (1.3.0 → 1.4.0):
+  - **Section I: Monorepo Architecture**: Added CRITICAL REQUIREMENT stating it is FORBIDDEN to implement feature functionality outside packages/ directory. Added explicit list of only permitted root-level files.
+  - **Section II: Package Separation Pattern**: Changed to NON-NEGOTIABLE, added MANDATORY STRUCTURE heading, expanded with Frontend/Backend Separation Rules, added detailed package structure example.
+  - **Prohibited Patterns**: Completely restructured into 4 categories with "CRITICAL PROHIBITIONS" heading. Added extensive section 1 on Non-Modular Implementation with 5 ❌ NEVER rules and 2 ✅ ALWAYS rules.
+  - **Quality Gates**: Added "Modular Architecture Compliance (CRITICAL)" as first gate with 5 specific checks.
+  - **Review Checklist**: Added "Modular Architecture (CRITICAL - MUST VERIFY FIRST)" section with 5 mandatory checks before other reviews.
+  - **Implementation Principles**: Added two new principles emphasizing ALL functionality in packages/ and frontend/backend separation.
+
+Added Sections (1.4.0):
+  - **Non-Modular Implementation Prohibitions**: Comprehensive list of forbidden patterns with clear NEVER/ALWAYS rules
+  - **Modular Architecture Quality Gates**: First-priority checks for package structure compliance
+  - **Modular Architecture Review Checklist**: Mandatory verification steps for code reviewers
+
+Key Architectural Enhancements (1.4.0):
+  - Absolute prohibition on feature code outside packages/ directory
+  - Explicit FORBIDDEN language for non-modular implementations  
+  - Clear distinction between permitted root-level configuration and forbidden root-level feature code
+  - Mandatory package separation into -frt/-srv for dual-sided features
+  - Required base/ directory in all packages without exception
+  - Quality gates prioritize modular architecture verification above all other checks
+  - Code review process must verify package structure FIRST before reviewing code quality
 
 Modified Principles (1.2.0 → 1.3.0):
-  - **Phase 2: Core Infrastructure**: Expanded infrastructure packages from 3 to 6, added @universo/ui-components, @universo/rest-docs, detailed workspace-scoped routing pattern
-  - **Phase 3: Workspace and First Domain**: Added optional Projects domain
-  - **Phase 6: Templates and Publication**: Added template builder interface specification
-  - **Security Standards**: Enhanced with specific policies, CI/CD requirements, and dependency management
-  - **Testing Requirements**: Added Next.js-specific patterns, coverage requirements, test organization
-  - **Documentation Standards**: Added package README structure template and review process
-
-Added Sections (1.3.0):
-  - **Workspace-Scoped Routing Pattern**: Consistent URL structure for all domain APIs
-  - **Template Builder Interface**: TypeScript interface for all template packages
-  - **Security Standards**: Comprehensive security policies and procedures
-  - **Testing Standards**: Detailed testing requirements for all package types
-  - **Documentation Structure**: Standard README template and organization
-
-Key Architectural Enhancements (1.3.0):
-  - Infrastructure packages: Expanded to 6 core packages (@universo/types, @universo/utils, @universo/api-client, @universo/i18n, @universo/ui-components, @universo/rest-docs)
-  - Projects domain: Added as optional Phase 3 domain
-  - Routing pattern: Workspace-scoped API routing for all domains
-  - Template system: Formalized interface for consistent template development
-  - Security: Explicit policies for vulnerability management and dependency security
-  - Testing: Next.js-specific testing patterns and coverage requirements
-  - Documentation: Standardized structure for package README files
-
-Modified Principles (1.1.0 → 1.2.0):
   - **Technology Stack Requirements**: Added Turborepo, tsdown, Husky, i18next, specific ORM options, updated auth to Supabase Auth Helpers, MUI v6, client state management options, API documentation tools, Docker
   - **Technology Guidelines**: Expanded with Next.js-specific patterns, MUI v6 setup, dual build requirements, package documentation requirements
   - **Version Management**: Enhanced with package standards
   - **Feature Development Roadmap**: Completely restructured from 5 to 7 phases with detailed scope changes
 
-Added Sections:
+Added Sections (1.3.0):
   - **Package Standards**: Directory structure, build requirements, documentation requirements, testing requirements, naming conventions
   - Phase 1 additions: Turborepo, Husky, Docker, SECURITY.md, package templates, @universo/types
   - Phase 2 additions: Profile management, shared infrastructure packages (@universo/utils, @universo/i18n, @universo/api-client), ORM selection, API docs
@@ -47,7 +45,7 @@ Added Sections:
   - **NEW Phase 6**: Templates and Publication system
   - **NEW Phase 7**: Advanced features and scaling (optional)
 
-Key Architectural Changes:
+Key Architectural Changes (1.3.0):
   - Authentication: Passport.js → Supabase Auth Helpers for Next.js
   - Build system: Added Turborepo + tsdown for package builds
   - Infrastructure packages: Defined @universo/types, @universo/utils, @universo/i18n, @universo/api-client
@@ -65,12 +63,11 @@ Templates Status:
   ✅ .github/instructions/i18n-docs.md - Reviewed, aligned
 
 Follow-up TODOs:
-  - Update Phase 1 specification with new requirements
-  - Create package README templates
-  - Create SECURITY.md
-  - Document Next.js-specific authentication patterns
-  - Document MUI v6 + Next.js App Router integration
-  - Create architectural decision records for ORM choice
+  - Update all existing specifications to explicitly require packages/ structure
+  - Add validation script to check for non-package feature code
+  - Update CI/CD to reject PRs with feature code outside packages/
+  - Create architectural decision record for strict modular requirement
+  - Update agent instructions with strengthened modular requirements
 -->
 
 # Universo Platformo Next Constitution
@@ -89,23 +86,58 @@ Follow-up TODOs:
 
 ### I. Monorepo Architecture (NON-NEGOTIABLE)
 
-The project MUST be structured as a monorepo managed with PNPM. All packages reside in the `packages/` directory. This ensures:
+The project MUST be structured as a monorepo managed with PNPM. **ALL functionality (except root-level configuration and build files) MUST reside in the `packages/` directory**. This ensures:
 - Unified dependency management across all modules
 - Simplified version control and atomic commits
 - Efficient workspace sharing and build optimization
 - Clear separation of concerns between functional domains
+- Ability to extract packages into separate repositories in the future
 
-**Rationale**: Monorepo structure with PNPM provides the foundation for managing complex multi-package architecture while maintaining development efficiency and preventing dependency conflicts.
+**CRITICAL REQUIREMENT**: It is FORBIDDEN to implement any feature functionality outside the `packages/` directory structure. The only permitted root-level files are:
+- Configuration files (package.json, tsconfig.json, turbo.json, etc.)
+- Build and tooling files (.eslintrc, .prettierrc, docker-compose.yml, etc.)
+- Documentation files (README.md, README-RU.md, SECURITY.md, etc.)
+- GitHub workflow files (.github/)
 
-### II. Package Separation Pattern
+**Rationale**: Monorepo structure with PNPM provides the foundation for managing complex multi-package architecture while maintaining development efficiency and preventing dependency conflicts. The strict packages/ requirement enables future extraction of packages into independent repositories without refactoring.
 
-Functional modules MUST be split into separate frontend and backend packages when both are required:
-- Frontend packages use `-frt` suffix (e.g., `packages/clusters-frt`)
-- Backend packages use `-srv` suffix (e.g., `packages/clusters-srv`)
-- Each package MUST contain a `base/` directory for future multi-implementation support
-- Packages that only need one side (frontend or backend) may omit the suffix
+### II. Package Separation Pattern (NON-NEGOTIABLE)
 
-**Rationale**: Clear separation enables independent scaling, deployment, and technology choices while the base directory pattern allows for multiple database or framework implementations in the future.
+**MANDATORY STRUCTURE**: ALL functional modules MUST be implemented as packages in the `packages/` directory with strict separation:
+
+**Frontend/Backend Separation Rules**:
+- When functionality requires BOTH frontend and backend: MUST create separate packages
+  - Frontend package: `packages/[domain]-frt/` (e.g., `packages/clusters-frt/`)
+  - Backend package: `packages/[domain]-srv/` (e.g., `packages/clusters-srv/`)
+- When functionality requires ONLY frontend OR backend: MAY use single package without suffix
+- Shared infrastructure packages: Use descriptive names (e.g., `packages/universo-types/`, `packages/universo-utils/`)
+
+**Base Directory Requirement**:
+- Each package MUST contain a `base/` directory at its root for the core implementation
+- The `base/` directory enables future multiple implementations (e.g., different database adapters)
+- ALL package code MUST be within the `base/` subdirectory
+
+**Package Structure Example**:
+```
+packages/
+├── clusters-frt/          # Clusters frontend package
+│   └── base/
+│       ├── src/
+│       ├── package.json
+│       └── README.md
+├── clusters-srv/          # Clusters backend package
+│   └── base/
+│       ├── src/
+│       ├── package.json
+│       └── README.md
+└── universo-types/        # Shared types package
+    └── base/
+        ├── src/
+        ├── package.json
+        └── README.md
+```
+
+**Rationale**: Clear separation enables independent scaling, deployment, and technology choices. The base directory pattern allows for multiple database or framework implementations in the future. Strict package separation enables gradual extraction of packages into independent repositories as the project matures.
 
 ### III. TypeScript-First Development
 
@@ -260,19 +292,36 @@ package-name/
 
 ### Prohibited Patterns
 
+**CRITICAL PROHIBITIONS** - These violations will result in rejected pull requests:
+
+**1. Non-Modular Implementation (STRICTLY FORBIDDEN)**:
+- ❌ **NEVER** implement feature functionality outside `packages/` directory
+- ❌ **NEVER** place business logic, domain code, or feature implementation in root-level directories
+- ❌ **NEVER** create monolithic applications without package separation
+- ❌ **NEVER** mix frontend and backend code in the same package when both are needed
+- ❌ **NEVER** skip the `base/` directory requirement in packages
+- ✅ **ALWAYS** create separate `-frt` and `-srv` packages for features needing both frontend and backend
+- ✅ **ALWAYS** place ALL feature code inside appropriate packages in `packages/` directory
+
+**2. Documentation and Configuration**:
 - Do NOT create separate `docs/` directory (documentation lives in external repository)
 - Do NOT create AI agent configuration files or directories (`.github/agents/`, `.github/prompts/`, etc.) - users will create these themselves as needed
   - **Note**: Existing AI agent files in `.github/agents/` and `.github/prompts/` are grandfathered and maintained by project administrators
   - This prohibition applies only to new AI-generated agent configuration files created by automated processes
+
+**3. Legacy Patterns from Reference Implementation**:
 - Do NOT copy legacy patterns from Universo Platformo React without evaluation
   - **Legacy Patterns to Avoid**: 
     - Mixing Flowise legacy code with new implementations
     - React-specific state management patterns that don't translate to Next.js
     - Client-side data fetching where Server Components would be more appropriate
     - Monolithic package structures that should be split into -frt/-srv
+
+**4. Technical Standards Violations**:
 - Do NOT bypass the database abstraction layer for quick fixes
 - Do NOT mix JavaScript and TypeScript in the same package
 - Do NOT use Pages Router patterns in an App Router project
+- Do NOT commit environment files with secrets (`.env.local`, `.env.production`)
 - Do NOT commit environment files with secrets (`.env.local`, `.env.production`)
 
 ## Development Workflow
@@ -303,6 +352,11 @@ package-name/
 ### Quality Gates
 
 Before merging, verify:
+- **Modular Architecture Compliance** (CRITICAL):
+  - All feature functionality is in `packages/` directory
+  - Frontend/backend separation follows `-frt`/`-srv` pattern when both needed
+  - Each package has `base/` directory
+  - No business logic in root-level directories
 - All tests pass (unit, integration, e2e where applicable)
 - TypeScript compilation succeeds with no errors
 - ESLint and Prettier checks pass
@@ -322,6 +376,15 @@ Before merging, verify:
 - At least one reviewer must approve before merging
 
 #### Review Checklist
+
+**Modular Architecture (CRITICAL - MUST VERIFY FIRST)**:
+- [ ] ALL feature code is in `packages/` directory (NO exceptions)
+- [ ] Frontend/backend properly separated into `-frt`/`-srv` packages when both needed
+- [ ] Each package has required `base/` directory structure
+- [ ] NO business logic or domain code in root-level directories
+- [ ] Package naming follows conventions (`@universo/[domain]-frt`, `@universo/[domain]-srv`)
+
+**Code Quality**:
 - [ ] Code follows TypeScript strict mode (no `any` types)
 - [ ] Next.js patterns used correctly (Server vs Client Components)
 - [ ] Database access uses abstraction layer (in `base/` directory)
@@ -957,6 +1020,7 @@ Phase 7 (Advanced Features: Multiplayer, Scaling) [Optional]
 ```
 
 ### Implementation Principles
+- **ALL functionality MUST be implemented in packages/ directory** - No exceptions for feature code
 - Each phase builds on previous phases without breaking existing functionality
 - New domains should reuse patterns from Clusters wherever possible (minimum 70% pattern reuse)
 - Advanced features integrate with but don't replace core domain functionality
@@ -965,5 +1029,6 @@ Phase 7 (Advanced Features: Multiplayer, Scaling) [Optional]
 - Breaking changes require major version bump and migration guide
 - Templates must be modular and independently maintainable
 - Publication system must be template-agnostic
+- **Frontend and backend MUST be in separate packages** when both are needed for a feature
 
-**Version**: 1.3.0 | **Ratified**: 2025-11-17 | **Last Amended**: 2025-11-17
+**Version**: 1.4.0 | **Ratified**: 2025-11-17 | **Last Amended**: 2025-11-17

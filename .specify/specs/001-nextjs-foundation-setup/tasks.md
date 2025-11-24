@@ -7,6 +7,19 @@
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
+**Scope**: This is **Phase 1: Foundation Setup** from the constitution roadmap. This phase establishes the repository structure and tooling that enables all future phases (Auth, Uniks, Metaverses, Spaces/Canvases, UPDL nodes, Templates).
+
+## Roadmap Context
+
+**Phase 1 (This Document)**: Foundation - Repository setup, Next.js configuration, monorepo structure
+**Phase 2 (Future)**: Core Infrastructure - Auth, Profile, Database abstraction, shared packages (@universo/types, @universo/utils, etc.)
+**Phase 3 (Future)**: Uniks (Workspaces) + Clusters - First domain entities with modular -frt/-srv packages
+**Phase 4 (Future)**: Metaverses, Spaces, Analytics - Additional domains following established patterns
+**Phase 5 (Future)**: UPDL nodes, LangChain integration, Space Builder - Visual programming system
+**Phase 6 (Future)**: Templates + Publication - Multi-platform export system
+
+**Reference Architecture**: This implementation draws on architectural patterns from [Universo Platformo React](https://github.com/teknokomo/universo-platformo-react) but adapts them for Next.js App Router with optimized package structure. Unlike the React version which contains monolithic Flowise packages, this implementation plans modular -frt/-srv package separation from the beginning.
+
 ## Format: `[ID] [P?] [Story] Description`
 
 - **[P]**: Can run in parallel (different files, no dependencies)
@@ -90,7 +103,7 @@ This project uses a monorepo structure:
 - [ ] T026 [US2] Verify pnpm-workspace.yaml includes packages/* glob pattern (created in T002)
 - [ ] T027 [US2] Verify packages/ directory exists with base/ subdirectory convention (created in T009)
 - [ ] T028 [US2] Add workspace commands to root package.json scripts (filter, recursive)
-- [ ] T029 [US2] Document package naming convention in README.md (-frt/-srv pattern, base/ requirement)
+- [ ] T029 [US2] Document package naming convention in README.md (-frt/-srv pattern, base/ requirement, future package roadmap: @universo/types, @universo/utils, @universo/i18n, @universo/api-client, uniks-frt/srv, clusters-frt/srv, metaverses-frt/srv, spaces-frt/srv, etc.)
 - [ ] T030 [US2] Document workspace commands in README.md (pnpm --filter, pnpm -r)
 - [ ] T031 [US2] Create packages/types/base/src/index.ts with example shared type definitions
 - [ ] T032 [US2] Verify packages/types can build successfully with `pnpm --filter @universo/types build`
@@ -476,3 +489,64 @@ With 3 developers after Foundational phase:
 
 **Suggested MVP Scope**: Phase 1 + Phase 2 + User Story 1 + User Story 2 (Foundation + Documentation + Monorepo)
 **Recommended First Release**: Add User Story 3 + 5 (Tooling + Next.js) for complete developer experience
+
+---
+
+## Future Package Architecture (Post-Phase 1)
+
+This Phase 1 foundation enables a modular package architecture across all future phases. The following planned packages will follow the `-frt` (frontend) / `-srv` (backend) separation pattern with `base/` directories:
+
+### Phase 2: Core Infrastructure Packages
+- `@universo/types` - Shared TypeScript types and interfaces
+- `@universo/utils` - Utility functions, UPDLProcessor foundation  
+- `@universo/i18n` - Internationalization runtime with next-intl
+- `@universo/api-client` - Type-safe API client for both API routes and Server Actions
+- `@universo/ui-components` - Shared Next.js UI components with MUI v6
+- `@universo/rest-docs` - API documentation with TypeDoc + OpenAPI
+- `profile-frt` / `profile-srv` - User profile management
+
+### Phase 3: Workspace and Domain Packages
+- `uniks-frt` / `uniks-srv` - Workspace (Unik) management system
+- `clusters-frt` / `clusters-srv` - Clusters → Domains → Resources (3-tier hierarchy)
+- `projects-frt` / `projects-srv` - Project management within workspaces (optional)
+
+### Phase 4: Additional Domain Packages
+- `metaverses-frt` / `metaverses-srv` - Virtual world containers (Metaverses → Sections → Entities)
+- `spaces-frt` / `spaces-srv` - Canvas/flow management with visual node editor
+- `analytics-frt` - Analytics dashboard and data visualization
+
+### Phase 5: UPDL and Visual Programming
+- `@universo/updl` - UPDL node definitions and interfaces (7 core high-level nodes)
+- `@universo/updl-processor` - Flow data to UPDL conversion engine
+- `space-builder-frt` / `space-builder-srv` - AI-assisted development (LLM → flow graphs)
+- `langchain-nodes` - LangChain integration node library (if applicable)
+
+### Phase 6: Template and Publication System
+- `@universo/template-quiz` - AR.js educational quiz template builder
+- `@universo/template-mmoomm` - PlayCanvas MMO experience template builder
+- Additional template packages for Three.js, Babylon.js, A-Frame
+- `publish-frt` / `publish-srv` - Publication system with UPDL → platform conversion
+
+**Architecture Principles:**
+- All packages follow modular patterns established in Phase 1
+- Frontend (-frt) and backend (-srv) are always separated when both are needed
+- All packages include `base/` directory for future database abstraction
+- Shared infrastructure packages use `@universo/` scope without -frt/-srv suffix
+- Template packages use `@universo/template-` prefix
+- All packages provide dual build output (CJS + ESM + Types) via tsdown
+- Bilingual documentation (README.md + README-RU.md) required for every package
+
+**Routing Pattern (Post-Phase 2):**
+All domain operations use workspace-scoped routes:
+```
+GET    /api/uniks/:unikId/clusters                    # List clusters in workspace
+POST   /api/uniks/:unikId/clusters                    # Create cluster
+GET    /api/uniks/:unikId/clusters/:clusterId         # Get cluster details
+PUT    /api/uniks/:unikId/clusters/:clusterId         # Update cluster
+DELETE /api/uniks/:unikId/clusters/:clusterId         # Delete cluster
+```
+
+This pattern ensures all operations are scoped to workspaces for proper multi-tenancy.
+
+**Reference Architecture Note:**
+Unlike [Universo Platformo React](https://github.com/teknokomo/universo-platformo-react/tree/main/packages) which contains monolithic packages from Flowise legacy (e.g., `flowise-components` with many functionalities), this Next.js implementation plans optimal package separation from the beginning. Each domain gets its own -frt/-srv packages, and shared functionality is extracted into focused @universo/ packages.

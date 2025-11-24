@@ -35,7 +35,12 @@ universo-platformo-next/
 ├── apps/                   # Next.js applications
 │   └── web/
 ├── .github/                # GitHub workflows and instructions
-├── specs/                  # Feature specifications
+├── .specify/               # Project documentation and specifications
+│   ├── memory/            # Project constitution and core principles
+│   ├── specs/             # Feature specifications (NNN-feature-name/)
+│   ├── templates/         # Documentation templates
+│   ├── scripts/           # Helper scripts
+│   └── docs/              # Analysis and summary documents
 └── [config files]          # Root: configuration only
 ```
 
@@ -96,8 +101,10 @@ pnpm dev
 
 See detailed documentation in:
 - [Project Constitution](.specify/memory/constitution.md) - Core principles and standards
-- [Feature Specifications](specs/) - Detailed feature designs
+- [Feature Specifications](.specify/specs/) - Detailed feature designs (each in NNN-feature-name/)
 - [GitHub Instructions](.github/instructions/) - Issue, PR, and label guidelines
+- [Analysis Documents](.specify/docs/analysis/) - Architectural analysis and review findings
+- [Summary Documents](.specify/docs/summaries/) - Project summaries and proposals
 
 ## 🔒 Modular Architecture Rules
 

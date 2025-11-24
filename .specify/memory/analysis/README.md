@@ -4,6 +4,10 @@ This directory contains architectural analyses, best practices documents, and re
 
 ## Document Inventory
 
+### Documentation Organization
+- **DOCUMENTATION-REORGANIZATION-SUMMARY.md** - Summary of documentation restructuring
+- **DOCUMENTATION-REORGANIZATION-SUMMARY-RU.md** - Russian version of reorganization summary
+
 ### Architectural Analysis
 - **ARCHITECTURAL-ANALYSIS.md** - Comprehensive comparison between React and Next.js implementations
 - **ARCHITECTURAL-ANALYSIS-SUMMARY-RU.md** - Russian summary of architectural analysis

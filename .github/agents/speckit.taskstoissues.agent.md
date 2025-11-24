@@ -1,5 +1,8 @@
 ---
 description: Convert existing tasks into actionable, dependency-ordered GitHub issues for the feature based on available design artifacts.
+allowed_paths:
+  - .specify/
+  - .github/
 tools: ['github/github-mcp-server/issue_write']
 ---
 

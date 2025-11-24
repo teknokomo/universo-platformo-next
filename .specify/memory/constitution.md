@@ -232,7 +232,7 @@ All work MUST be tracked through GitHub Issues:
 ### VII. Specification-First Approach
 
 Complex features MUST be designed before implementation:
-- Create specification documents in `specs/` directory structure
+- Create specification documents in `.specify/specs/` directory structure
 - Follow `.specify/templates/spec-template.md` for specifications
 - Use `.specify/templates/plan-template.md` for implementation planning
 - Generate tasks using `.specify/templates/tasks-template.md` structure
@@ -872,7 +872,7 @@ export type { EntityDTO, CreateEntityDTO } from './types';
 ### Pre-Implementation Phase
 
 1. **Issue Creation**: Create GitHub Issue with bilingual description
-2. **Specification**: Write detailed spec in `specs/` following templates
+2. **Specification**: Write detailed spec in `.specify/specs/` following templates
 3. **Constitution Check**: Verify alignment with all core principles
 4. **Review & Approval**: Get specification reviewed before implementation
 

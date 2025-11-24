@@ -1,5 +1,8 @@
 ---
 description: Create or update the feature specification from a natural language feature description.
+allowed_paths:
+  - .specify/
+  - .github/
 handoffs: 
   - label: Build Technical Plan
     agent: speckit.plan

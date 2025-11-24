@@ -1,5 +1,8 @@
 ---
 description: Generate a custom checklist for the current feature based on user requirements.
+allowed_paths:
+  - .specify/
+  - .github/
 ---
 
 ## Checklist Purpose: "Unit Tests for English"

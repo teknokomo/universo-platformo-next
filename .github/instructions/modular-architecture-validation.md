@@ -84,7 +84,7 @@ done
 - Package management: `package.json`, `pnpm-workspace.yaml`, `turbo.json`
 - Documentation: `README.md`, `README-RU.md`, `SECURITY.md`, `LICENSE`
 - Tooling: `.gitignore`, `.dockerignore`, `Dockerfile`, `docker-compose.yml`
-- Directories: `.github/`, `.specify/`, `specs/`, `packages/`, `apps/`
+- Directories: `.github/`, `.specify/`, `packages/`, `apps/`
 
 **NOT Allowed in Root**:
 - Source code directories: `src/`, `components/`, `services/`, `lib/`
@@ -279,5 +279,5 @@ jobs:
 
 Questions about modular architecture? See:
 - [Project Constitution](../../.specify/memory/constitution.md)
-- [Implementation Plan](../../specs/001-nextjs-foundation-setup/plan.md)
+- [Implementation Plan](../../.specify/specs/001-nextjs-foundation-setup/plan.md)
 - Create an issue with label `question` and `architecture`

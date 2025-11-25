@@ -140,7 +140,7 @@ The project includes configuration files and environment variable templates for 
 
 ### User Story 7 - Prepare Authentication Infrastructure (Priority: P3)
 
-The project includes configuration and documentation for Passport.js authentication with Supabase connector. The authentication infrastructure is designed with abstraction to support future authentication strategies while initially focusing on Supabase.
+The project includes configuration and documentation for Supabase authentication using the @supabase/ssr package. The authentication infrastructure is designed with abstraction to support future authentication strategies while initially focusing on Supabase Auth.
 
 **Why this priority**: Authentication setup can be documented and configured in Phase 1 without full implementation. The actual authentication middleware and flows will be implemented in Phase 2 when building core infrastructure.
 
@@ -148,7 +148,7 @@ The project includes configuration and documentation for Passport.js authenticat
 
 **Acceptance Scenarios**:
 
-1. **Given** authentication is configured, **When** a developer reviews the setup documentation, **Then** they understand how Passport.js integrates with Supabase
+1. **Given** authentication is configured, **When** a developer reviews the setup documentation, **Then** they understand how @supabase/ssr integrates with Next.js for authentication
 2. **Given** auth configuration exists, **When** a developer examines `.env.example`, **Then** they find all necessary Supabase authentication variables documented
 3. **Given** the abstraction pattern is documented, **When** a developer reads the architecture guide, **Then** they understand how to add future authentication strategies
 4. **Given** auth middleware patterns are documented, **When** a developer needs to protect routes, **Then** they know the planned approach for authentication middleware
@@ -165,7 +165,7 @@ The project includes Material UI (MUI) configured for Next.js App Router with th
 
 **Acceptance Scenarios**:
 
-1. **Given** MUI is configured, **When** a developer reviews dependencies, **Then** they find MUI v5.x or latest stable version
+1. **Given** MUI is configured, **When** a developer reviews dependencies, **Then** they find MUI v6.x or latest stable version with ColorScheme API
 2. **Given** theming is set up, **When** a developer examines the configuration, **Then** they find theme configuration file with color palette and typography settings
 3. **Given** MUI + Next.js integration is documented, **When** a developer reads the UI guide, **Then** they understand how to use MUI with Server Components vs Client Components
 4. **Given** component patterns are documented, **When** a developer needs to create UI, **Then** they know the conventions for consistent MUI usage
@@ -276,15 +276,15 @@ The project includes testing framework configuration and documentation for unit 
 
 #### Authentication Requirements
 
-- **FR-043**: System MUST include configuration for Passport.js authentication framework
-- **FR-044**: System MUST include Supabase authentication connector or compatible strategy for Passport.js
+- **FR-043**: System MUST include configuration for Supabase authentication using @supabase/ssr package for Next.js App Router
+- **FR-044**: System MUST include browser and server Supabase client patterns with cookie-based session management
 - **FR-045**: Documentation MUST explain authentication middleware patterns for protecting routes
 - **FR-046**: Authentication configuration MUST be designed to support future authentication strategies (OAuth, SAML, etc.)
 - **FR-047**: System MUST include environment variables for authentication configuration in `.env.example`
 
 #### UI Framework Requirements
 
-- **FR-048**: System MUST include Material UI (MUI) version 5.x or latest stable
+- **FR-048**: System MUST include Material UI (MUI) version 6.x or latest stable with ColorScheme API
 - **FR-049**: System MUST include MUI theme configuration with customizable color palette and typography
 - **FR-050**: Documentation MUST explain how to use MUI components with Next.js App Router
 - **FR-051**: Documentation MUST clarify which MUI components work in Server Components vs Client Components
@@ -292,7 +292,7 @@ The project includes testing framework configuration and documentation for unit 
 
 #### Testing Requirements
 
-- **FR-053**: System MUST include a testing framework configured (Jest, Vitest, or similar)
+- **FR-053**: System MUST include Vitest testing framework configured with React Testing Library
 - **FR-054**: System MUST include example tests for Server Components, Client Components, and API routes
 - **FR-055**: System MUST support running tests with `pnpm test` command
 - **FR-056**: System MUST include test coverage reporting configuration
@@ -320,7 +320,13 @@ The project includes testing framework configuration and documentation for unit 
 - **FR-069**: System MUST enforce TypeScript strict mode with no implicit `any` types
 - **FR-070**: ESLint MUST be configured to catch common Next.js and React mistakes
 - **FR-071**: Prettier MUST be configured to auto-format code consistently
-- **FR-072**: Pre-commit hooks MAY be configured to run linting and formatting
+- **FR-072**: Pre-commit hooks MUST be configured using Husky to run linting and formatting
+
+#### Build System Requirements
+
+- **FR-073**: System MUST use Turborepo for monorepo build orchestration with turbo.json configuration
+- **FR-074**: Shared packages MUST use tsdown for dual build output (CommonJS + ES Modules + TypeScript declarations)
+- **FR-075**: Root package.json MUST include turborepo-compatible scripts (build, dev, lint, test, type-check)
 
 ### Key Entities
 
@@ -330,7 +336,7 @@ The project includes testing framework configuration and documentation for unit 
 - **Documentation Files**: Bilingual README files providing project information, setup instructions, and architectural guidance
 - **GitHub Instructions**: Guidelines for creating issues, pull requests, managing labels, and handling internationalization
 - **Database Abstraction Layer**: Interface-based abstraction allowing multiple database implementations without changing business logic
-- **Authentication Strategy**: Passport.js-based authentication system with pluggable strategies for different auth providers
+- **Authentication Strategy**: Supabase Auth-based authentication system using @supabase/ssr with browser and server clients, supporting future OAuth and SAML strategies
 - **UI Theme**: MUI theme configuration defining consistent visual styling across the application
 - **Test Suite**: Collection of unit, integration, and end-to-end tests validating application functionality
 - **Environment Configuration**: Typed environment variables managing different deployment contexts (dev/staging/prod)
@@ -375,7 +381,7 @@ The project includes testing framework configuration and documentation for unit 
 
 - **SC-021**: Database abstraction layer design is documented with clear interfaces
 - **SC-022**: Supabase configuration variables are documented in `.env.example`
-- **SC-023**: Authentication configuration is documented with Passport.js setup instructions
+- **SC-023**: Authentication configuration is documented with @supabase/ssr setup instructions for browser and server clients
 - **SC-024**: Environment configuration is typed in TypeScript with validation
 
 #### UI Framework Criteria
@@ -389,6 +395,12 @@ The project includes testing framework configuration and documentation for unit 
 - **SC-028**: No security vulnerabilities exist in configured dependencies (npm audit passes)
 - **SC-029**: Code review guidelines are documented and accessible
 - **SC-030**: All configuration files follow documented standards and best practices
+
+#### Build System Criteria
+
+- **SC-031**: Turborepo builds all packages in correct dependency order with caching enabled
+- **SC-032**: Pre-commit hooks (Husky) run successfully before each commit, executing lint and format checks
+- **SC-033**: Shared packages produce valid dual build output (CJS + ESM + TypeScript declarations)
 
 ### Assumptions
 
@@ -409,7 +421,7 @@ The project includes testing framework configuration and documentation for unit 
 #### Implementation Phases
 
 - Material UI (MUI) library configuration will be completed in Phase 1, but extensive component usage occurs in later phases
-- Passport.js authentication will be fully implemented in Phase 2 (Core Infrastructure), with Phase 1 focusing on configuration and documentation
+- Supabase Auth with @supabase/ssr will be fully implemented in Phase 2 (Core Infrastructure), with Phase 1 focusing on configuration and documentation
 - Database abstraction layer will be designed in Phase 1, with full implementation in Phase 2
 - Testing infrastructure will be set up in Phase 1, with comprehensive test coverage growing as features are implemented in later phases
 

@@ -27,35 +27,35 @@ Establish the foundational infrastructure for Universo Platformo Next, a Next.js
 - PNPM workspaces for monorepo dependency management
 - Turborepo for coordinated builds with caching
 - tsdown for dual CJS+ESM output in shared packages
-- NEEDS CLARIFICATION: Turborepo task configuration patterns for Next.js + shared packages
+- ✅ RESOLVED: See research.md Task 1 for Turborepo task configuration patterns
 
 **UI Framework**:
 - Material UI v6 with ColorScheme API for theming
 - Emotion cache for Next.js App Router SSR compatibility  
-- NEEDS CLARIFICATION: Best practices for MUI v6 + Next.js 14 App Router integration (Server vs Client Components)
+- ✅ RESOLVED: See research.md Task 2 for MUI v6 + Next.js 14 App Router integration patterns
 
 **Authentication**:
-- Supabase Auth Helpers for Next.js (not Passport.js - Express-centric)
-- NEEDS CLARIFICATION: Next.js middleware patterns for auth with App Router
+- Supabase Auth with @supabase/ssr package (not Passport.js - Express-centric)
+- ✅ RESOLVED: See research.md Task 3 for Next.js middleware patterns for auth
 
 **Database Abstraction**:
-- ORM selection pending (Prisma, Drizzle ORM, or TypeORM)
-- NEEDS CLARIFICATION: ORM compatibility with Next.js Server Actions and App Router patterns
+- ORM recommendation: Prisma (see research.md Task 4)
+- ✅ RESOLVED: See research.md Task 4 for ORM compatibility with Next.js Server Actions
 
 **Internationalization**:
-- next-intl or i18next for runtime localization
-- NEEDS CLARIFICATION: Best i18n library for Next.js App Router with bilingual docs strategy
+- next-intl for runtime localization (recommended)
+- ✅ RESOLVED: See research.md Task 5 for i18n library selection
 
 **State Management**:
 - Next.js native (Server/Client Components, Server Actions) as primary
-- Zustand or Jotai for complex client state
-- NEEDS CLARIFICATION: When to use client state management vs Server Components
+- Zustand for complex client state (lightweight alternative to Redux)
+- ✅ RESOLVED: See research.md Task 6 for state management strategy
 
 **Development Tools**:
 - Husky for git hooks
 - ESLint + Prettier for code quality
 - Docker for containerized development
-- NEEDS CLARIFICATION: Docker Compose setup for Next.js + Supabase local development
+- ✅ RESOLVED: See research.md Task 7 for Docker Compose setup
 
 ## Constitution Check
 

@@ -396,6 +396,12 @@ The project includes testing framework configuration and documentation for unit 
 - **SC-029**: Code review guidelines are documented and accessible
 - **SC-030**: All configuration files follow documented standards and best practices
 
+#### Build System Criteria
+
+- **SC-031**: Turborepo builds all packages in correct dependency order with caching enabled
+- **SC-032**: Pre-commit hooks (Husky) run successfully before each commit, executing lint and format checks
+- **SC-033**: Shared packages produce valid dual build output (CJS + ESM + TypeScript declarations)
+
 ### Assumptions
 
 #### Development Environment

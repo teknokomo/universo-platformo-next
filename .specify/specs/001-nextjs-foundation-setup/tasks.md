@@ -221,7 +221,7 @@ This project uses a monorepo structure:
 - [ ] T079 [P] [US7] Create apps/web/src/utils/supabase/server.ts with server client pattern from research.md
 - [ ] T080 [US7] Create apps/web/middleware.ts with authentication middleware pattern from research.md
 - [ ] T081 [US7] Add @supabase/supabase-js and @supabase/ssr to apps/web/package.json
-- [ ] T082 [US7] Document authentication setup in README.md (Supabase Auth Helpers, middleware pattern)
+- [ ] T082 [US7] Document authentication setup in README.md (@supabase/ssr, browser/server clients, middleware pattern)
 - [ ] T083 [US7] Add corresponding authentication documentation to README-RU.md
 - [ ] T084 [P] [US7] Document protected route patterns in README.md
 - [ ] T085 [P] [US7] Add corresponding protected route documentation to README-RU.md

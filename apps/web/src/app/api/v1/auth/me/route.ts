@@ -11,6 +11,6 @@ export async function GET() {
 
     return NextResponse.json({
         id: user.id,
-        email: user.email
+        email: user.email ?? ''
     })
 }

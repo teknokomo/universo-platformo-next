@@ -56,7 +56,7 @@ universo-platformo-next/
 
 ### Предварительные требования
 
-- **Node.js**: 18.x или выше
+- **Node.js**: 18.18+ или 20+
 - **PNPM**: 8.x или выше
 - **Supabase**: Проект с включённой аутентификацией по email/паролю
 
@@ -67,9 +67,7 @@ universo-platformo-next/
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 NEXT_PUBLIC_APP_URL=http://localhost:3000
-AUTH_SESSION_SECRET=your-session-secret-min-32-chars
 ```
 
 ### Установка

@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({
-        user: { id: data.user?.id, email: data.user?.email },
+        user: data.user ? { id: data.user.id, email: data.user.email ?? '' } : null,
         message: 'Please check your email to confirm your account'
     })
 }

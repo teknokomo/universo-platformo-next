@@ -22,5 +22,11 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: error.message }, { status: 401 })
     }
 
-    return NextResponse.json({ user: { id: data.user?.id, email: data.user?.email } })
+    const user = data.user
+
+    if (!user) {
+        return NextResponse.json({ error: 'Unexpected authentication response' }, { status: 500 })
+    }
+
+    return NextResponse.json({ user: { id: user.id, email: user.email ?? '' } })
 }

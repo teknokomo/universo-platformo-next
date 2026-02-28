@@ -8,13 +8,11 @@
     "type-check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "next": ">=14",
+    "next": ">=15",
     "react": ">=18",
     "react-dom": ">=18"
   },
   "dependencies": {
-    "@supabase/ssr": "^0.5.1",
-    "@supabase/supabase-js": "^2.45.4",
     "@mui/material": "^6.1.6"
   },
   "devDependencies": {

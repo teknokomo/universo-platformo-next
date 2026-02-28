@@ -2,9 +2,16 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 
 export async function POST(request: NextRequest) {
-    const { email, password } = await request.json()
+    let body: unknown
+    try {
+        body = await request.json()
+    } catch {
+        return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
+    }
 
-    if (!email || !password) {
+    const { email, password } = body as Record<string, unknown>
+
+    if (typeof email !== 'string' || !email || typeof password !== 'string' || !password) {
         return NextResponse.json({ error: 'Email and password are required' }, { status: 400 })
     }
 

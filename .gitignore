@@ -22,6 +22,11 @@
 **/dist
 **/build
 
+## Next.js
+**/.next
+**/next-env.d.ts
+**/*.tsbuildinfo
+
 ## temp
 **/tmp
 **/temp

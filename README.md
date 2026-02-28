@@ -56,7 +56,7 @@ universo-platformo-next/
 
 ### Prerequisites
 
-- **Node.js**: 18.18+ or 20+
+- **Node.js**: 20+
 - **PNPM**: 8.x or higher
 - **Supabase**: Project with email/password auth enabled
 

@@ -9,6 +9,10 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
     }
 
+    if (typeof body !== 'object' || body === null) {
+        return NextResponse.json({ error: 'Email and password are required' }, { status: 400 })
+    }
+
     const { email, password } = body as Record<string, unknown>
 
     if (typeof email !== 'string' || !email || typeof password !== 'string' || !password) {

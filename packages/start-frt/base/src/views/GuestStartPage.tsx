@@ -12,10 +12,6 @@ export default function GuestStartPage() {
                 display: 'flex',
                 flexDirection: 'column',
                 minHeight: '100vh',
-                backgroundImage: 'url(/background-image.jpg)',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
                 '&::before': {
                     content: '""',
                     position: 'absolute',

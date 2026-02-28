@@ -1,0 +1,6 @@
+export { default as StartPage } from './views/StartPage'
+export { default as GuestStartPage } from './views/GuestStartPage'
+export { default as AuthenticatedStartPage } from './views/AuthenticatedStartPage'
+export { StartFooter } from './components/StartFooter'
+export { default as Hero } from './components/Hero'
+export { default as Testimonials } from './components/Testimonials'

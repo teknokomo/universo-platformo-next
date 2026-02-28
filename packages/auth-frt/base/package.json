@@ -8,6 +8,7 @@
     "type-check": "tsc --noEmit"
   },
   "peerDependencies": {
+    "next": ">=14",
     "react": ">=18",
     "react-dom": ">=18"
   },

@@ -84,6 +84,9 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.45.4
         version: 2.98.0
+      next:
+        specifier: '>=14'
+        version: 14.2.15(react-dom@18.3.1)(react@18.3.1)
       react:
         specifier: '>=18'
         version: 18.3.1
@@ -109,6 +112,9 @@ importers:
       '@universo/auth-frt':
         specifier: workspace:*
         version: link:../../auth-frt/base
+      next:
+        specifier: '>=14'
+        version: 14.2.15(react-dom@18.3.1)(react@18.3.1)
       react:
         specifier: '>=18'
         version: 18.3.1

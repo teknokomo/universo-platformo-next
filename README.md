@@ -154,7 +154,7 @@ pnpm --filter @universo/web build   # Build specific package
 
 ## 📄 License
 
-[MIT License](LICENSE)
+Omsk Open License
 
 ## 🔗 Links
 
